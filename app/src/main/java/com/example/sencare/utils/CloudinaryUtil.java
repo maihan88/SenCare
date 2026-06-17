@@ -26,3 +26,11 @@ public class CloudinaryUtil {
 }
 
 
+import com.cloudinary.android.MediaManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CloudinaryUtil {
+    // Dùng sau cho upload ảnh lên Cloudinary
+}

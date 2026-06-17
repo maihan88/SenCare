@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private MaterialButton btnLogin, btnRegister;
-    private TextView tvForgotPassword;
     private FirestoreHelper dbHelper;
 
 
@@ -35,16 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        // 11.1 Luồng mở app: Kiểm tra đăng nhập
-        FirebaseUser currentUser = FirebaseUtil.getAuth().getCurrentUser();
         dbHelper = new FirestoreHelper();
-
-
-        if (currentUser != null) {
-            checkUserRoleAndRedirect(currentUser.getUid());
-            return; // Dừng xử lý layout nếu đang chuyển hướng
-        }
 
 
         setContentView(R.layout.activity_main);
@@ -52,15 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
 
         btnLogin.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         btnRegister.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, RegisterActivity.class)));
-        tvForgotPassword.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, ForgotPasswordActivity.class)));
     }
 
 

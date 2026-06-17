@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bgprofileuser"
     android:orientation="vertical"
-    tools:context=".activities.dashboard.UserFormActivity">
+    tools:context=".activities.profile.UserFormActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -24,7 +24,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon, android:label">
         <activity
-            android:name=".activities.dashboard.UserFormActivity"
+            android:name=".activities.profile.UserFormActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.

@@ -10,6 +10,7 @@
     android:background="@drawable/background"
     tools:context=".activities.auth.LoginActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,6 +31,7 @@
             style="@style/Widget.MaterialComponents.Button" />
     </LinearLayout>
 
+
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="250dp"
@@ -37,104 +39,99 @@
         android:layout_gravity="center"
         android:src="@drawable/logo" />
 
-        <LinearLayout
-            android:layout_width="320dp"
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_login_box"
+        android:layout_gravity="center">
+
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_login_box"
-            android:layout_gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nhập thông tin đăng nhập"
-                android:textColor="#5A7E9B"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_title"
-                android:padding="12dp"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tên đăng nhập"
-                android:textSize="20dp"
-                android:textColor="#5A7E9B"
-                android:layout_marginTop="20dp"/>
-
-            <EditText
-                android:id="@+id/edtUsername"
-                android:layout_width="match_parent"
-                android:hint="Nhập tên đăng nhập của bạn"
-                android:layout_height="55dp"
-                android:background="@drawable/bg_edittext"
-                android:padding="12dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mật khẩu"
-                android:textSize="20dp"
-                android:textColor="#5A7E9B"
-                android:layout_marginTop="10dp"/>
-
-            <EditText
-                android:id="@+id/edtPassword"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="Nhập mật khẩu từ 7-13 ký tự"
-                android:inputType="textPassword"
-                android:background="@drawable/bg_edittext"
-                android:padding="12dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Địa chỉ Email"
-                android:textSize="20dp"
-                android:textColor="#5A7E9B"
-                android:layout_marginTop="10dp"/>
-
-            <EditText
-                android:id="@+id/edtEmail"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="Nhập Email có đuôi @gmail"
-                android:background="@drawable/bg_edittext"
-                android:padding="12dp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogin"
-                android:layout_width="130dp"
-                android:layout_height="52dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10sp"
-                android:text="Đăng nhập"
-                android:textColor="#4A89B0"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:backgroundTint="#E7FD7B"
-                app:cornerRadius="26dp"
-                app:strokeWidth="4dp"
-                app:strokeColor="#44C7AE"/>
-
-            <TextView
-                android:id="@+id/tvForgotPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="1dp"
-                android:text="Quên mật khẩu?"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true" />
+            android:text="Nhập thông tin đăng nhập"
+            android:textColor="#5A7E9B"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_title"
+            android:padding="12dp"
+            android:layout_gravity="center"/>
 
 
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên đăng nhập"
+            android:textSize="20dp"
+            android:textColor="#5A7E9B"
+            android:layout_marginTop="20dp"/>
+
+
+        <EditText
+            android:id="@+id/edtUsername"
+            android:layout_width="match_parent"
+            android:hint="Nhập tên đăng nhập của bạn"
+            android:layout_height="55dp"
+            android:background="@drawable/bg_edittext"
+            android:padding="12dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mật khẩu"
+            android:textSize="20dp"
+            android:textColor="#5A7E9B"
+            android:layout_marginTop="10dp"/>
+
+
+        <EditText
+            android:id="@+id/edtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Nhập mật khẩu từ 7-13 ký tự"
+            android:inputType="textPassword"
+            android:background="@drawable/bg_edittext"
+            android:padding="12dp"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="130dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10sp"
+            android:text="Đăng nhập"
+            android:textColor="#4A89B0"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:backgroundTint="#E7FD7B"
+            app:cornerRadius="26dp"
+            app:strokeWidth="4dp"
+            app:strokeColor="#44C7AE"/>
+
+
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="1dp"
+            android:text="Quên mật khẩu?"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true" />
+
+
+
+    </LinearLayout>
 </LinearLayout>
+
+

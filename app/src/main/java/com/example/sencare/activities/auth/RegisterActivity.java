@@ -26,7 +26,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText edtUsername, edtEmail, edtPassword, edtConfirmPassword;
     private RadioButton rbUser, rbSpa;
     private MaterialButton btnRegister;
-    private TextView tvForgotPassword;
     private FirebaseAuth mAuth;
     private FirestoreHelper dbHelper;
 
@@ -48,13 +47,9 @@ public class RegisterActivity extends AppCompatActivity {
         rbUser = findViewById(R.id.radiospinnerUser);
         rbSpa = findViewById(R.id.radiospinnerSpa);
         btnRegister = findViewById(R.id.btnLogin);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
 
         btnRegister.setOnClickListener(v -> registerUser());
-        tvForgotPassword.setOnClickListener(v ->
-                startActivity(new Intent(RegisterActivity.this, ForgotPasswordActivity.class))
-        );
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
     }
 
@@ -117,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Hãy thiết lập hồ sơ.", Toast.LENGTH_SHORT).show();
 
                     // Chuyển sang UserFormActivity để cài đặt profile (ảnh, tên hiển thị)
-                    Intent intent = new Intent(RegisterActivity.this, com.example.sencare.activities.dashboard.UserFormActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this, com.example.sencare.activities.profile.UserFormActivity.class);
                     intent.putExtra("IS_EDIT_MODE", false);
                     startActivity(intent);
                     finish();

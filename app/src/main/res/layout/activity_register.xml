@@ -32,7 +32,7 @@
 
     <LinearLayout
         android:layout_width="320dp"
-        android:layout_height="645dp"
+        android:layout_height="630dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:background="@drawable/bg_login_box"
@@ -164,20 +164,6 @@
             app:cornerRadius="26dp"
             app:strokeColor="#44C7AE"
             app:strokeWidth="4dp" />
-
-        <TextView
-            android:id="@+id/tvForgotPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="1dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:minHeight="48dp"
-            android:text="Quên mật khẩu?"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
     </LinearLayout>
 </LinearLayout>

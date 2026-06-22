@@ -2,9 +2,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.diary.DiaryTimelineActivity">
+    android:orientation="vertical"
+    android:background="@drawable/background"
+    tools:context=".activities.diary.DiaryTimelineActivity"> <LinearLayout
+    android:id="@+id/headerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#FF6B6B"
+        android:padding="10dp"
+        android:src="@drawable/backbutton" />
+
+    <TextView
+        android:id="@+id/tvDiaryTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Nhật ký cục cưng"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/btnAddDiary"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:backgroundTint="#F4D03F"
+        android:padding="10dp"
+        android:src="@android:drawable/ic_menu_camera" />
+</LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDiaryList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/itemdiarycard" />
 
 </LinearLayout>

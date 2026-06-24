@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SenCare</string>
     <string name="title_activity_map_test">MapTest</string>
+    <string name="google_maps_key">AIzaSyCZ_hWLClKAdGVgoAnnaITTBMEnvrnKunA</string>
 </resources>

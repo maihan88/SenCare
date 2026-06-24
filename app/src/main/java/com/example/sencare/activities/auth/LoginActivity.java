@@ -20,19 +20,18 @@ import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 public class LoginActivity extends AppCompatActivity {
 
 
-    private EditText edtUsername, edtPassword;
-    private MaterialButton btnLogin, btnClose;
+    private EditText edtEmail;
+    private EditText edtPassword;
+    private MaterialButton btnLogin;
+    private MaterialButton btnClose;
     private TextView tvForgotPassword;
     private FirebaseAuth mAuth;
     private FirestoreHelper dbHelper;
-    private FirebaseFirestore db;
 
 
     @Override
@@ -43,17 +42,16 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseUtil.getAuth();
         dbHelper = new FirestoreHelper();
-        db = FirebaseUtil.getFirestore();
 
 
-        edtUsername = findViewById(R.id.edtUsername);
+        edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnClose = findViewById(R.id.btnClose);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
 
-        btnLogin.setOnClickListener(v -> loginWithFullName());
+        btnLogin.setOnClickListener(v -> loginUser());
 
 
         if (btnClose != null) {
@@ -66,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void loginWithFullName() {
-        String fullName = edtUsername.getText() != null ? edtUsername.getText().toString().trim() : "";
+    private void loginUser() {
+        String input = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
         String password = edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
 
 
-        if (fullName.isEmpty()) {
-            edtUsername.setError("Vui lòng nhập tên đăng nhập");
+        if (input.isEmpty()) {
+            edtEmail.setError("Vui lòng nhập email hoặc tên đăng nhập");
             return;
         }
         if (password.isEmpty()) {
@@ -82,39 +80,50 @@ public class LoginActivity extends AppCompatActivity {
 
 
         btnLogin.setEnabled(false);
-
-
-        // Bước 1: Tìm Email tương ứng với Full Name trong Firestore
-        db.collection("users")
-                .whereEqualTo("fullName", fullName)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        String email = queryDocumentSnapshots.getDocuments().get(0).getString("email");
-                        // Bước 2: Đăng nhập bằng Email vừa tìm được
-                        performLogin(email, password);
-                    } else {
+        
+        // Kiểm tra xem input là email hay username
+        if (input.contains("@")) {
+            // Đăng nhập trực tiếp bằng Email
+            performFirebaseLogin(input, password);
+        } else {
+            // Tìm email tương ứng với username trong Firestore
+            dbHelper.getUserByUsername(input)
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            String email = queryDocumentSnapshots.getDocuments().get(0).getString("email");
+                            if (email != null) {
+                                performFirebaseLogin(email, password);
+                            } else {
+                                btnLogin.setEnabled(true);
+                                Toast.makeText(this, "Không tìm thấy email cho người dùng này", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            btnLogin.setEnabled(true);
+                            Toast.makeText(this, "Tên đăng nhập không tồn tại", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
                         btnLogin.setEnabled(true);
-                        Toast.makeText(this, "Tên đăng nhập không tồn tại", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    btnLogin.setEnabled(true);
-                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                        Toast.makeText(this, "Lỗi kiểm tra tên đăng nhập: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 
-
-    private void performLogin(String email, String password) {
+    private void performFirebaseLogin(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     btnLogin.setEnabled(true);
                     if (task.isSuccessful()) {
-                        String uid = mAuth.getCurrentUser().getUid();
-                        checkUserRole(uid);
+                        String uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+                        if (uid != null) {
+                            checkUserRole(uid);
+                        } else {
+                            Toast.makeText(LoginActivity.this,
+                                    "Không thể lấy UID người dùng", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(this, "Mật khẩu không chính xác", Toast.LENGTH_SHORT).show();
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Đăng nhập thất bại";
+                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + errorMsg, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -153,5 +162,3 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 }
-
-

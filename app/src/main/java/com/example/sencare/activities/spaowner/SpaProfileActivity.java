@@ -1,56 +1,87 @@
 package com.example.sencare.activities.spaowner;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
 import com.example.sencare.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.sencare.models.Spa;
+import com.example.sencare.utils.FirestoreHelper;
+import com.google.android.material.button.MaterialButton;
 
 public class SpaProfileActivity extends AppCompatActivity {
 
-    private TextView tvSpaName, tvSpaEmail;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private TextView tvSpaName, tvAddress, tvPhone, tvDescription, tvServices, tvPriceRange;
+    private ImageView ivSpaAvatar;
+    private ImageButton btnBack;
+    private MaterialButton btnEditInfo;
+    private FirestoreHelper dbHelper;
+    private String currentSpaId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spa_profile);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
+        currentSpaId = getIntent().getStringExtra("SPA_ID");
 
-        tvSpaName = findViewById(R.id.tvSpaName);
-        tvSpaEmail = findViewById(R.id.tvSpaEmail);
+        initViews();
 
-        loadSpaInfo();
+        btnBack.setOnClickListener(v -> finish());
+        btnEditInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SpaFormActivity.class);
+            intent.putExtra("SPA_ID", currentSpaId);
+            startActivity(intent);
+        });
+
+        if (currentSpaId != null) {
+            loadSpaInfo(currentSpaId);
+        } else {
+            Toast.makeText(this, "Không tìm thấy ID Spa", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void loadSpaInfo() {
-        // Kiểm tra đăng nhập để tránh NullPointerException
-        if (mAuth.getCurrentUser() == null) {
-            Toast.makeText(this, "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void initViews() {
+        tvSpaName = findViewById(R.id.tvSpaName);
+        tvAddress = findViewById(R.id.tvAddress);
+        tvPhone = findViewById(R.id.tvPhone);
+        tvDescription = findViewById(R.id.tvDescription);
+        tvServices = findViewById(R.id.tvServices);
+        tvPriceRange = findViewById(R.id.tvPriceRange);
+        ivSpaAvatar = findViewById(R.id.ivSpaAvatar);
+        btnBack = findViewById(R.id.btnBack);
+        btnEditInfo = findViewById(R.id.btnEditInfo);
+    }
 
-        String uid = mAuth.getCurrentUser().getUid();
-        db.collection("users").document(uid).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String username = documentSnapshot.getString("username");
-                        String email = documentSnapshot.getString("email");
-                        // Xử lý null cho text
-                        tvSpaName.setText(username != null ? username : "");
-                        tvSpaEmail.setText(email != null ? email : "");
-                    } else {
-                        Toast.makeText(SpaProfileActivity.this, "Không tìm thấy thông tin spa", Toast.LENGTH_SHORT).show();
+    private void loadSpaInfo(String spaId) {
+        dbHelper.getSpa(spaId).addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Spa spa = documentSnapshot.toObject(Spa.class);
+                if (spa != null) {
+                    tvSpaName.setText(spa.getSpaName());
+                    tvAddress.setText(spa.getAddress());
+                    tvPhone.setText(spa.getPhone());
+                    tvDescription.setText(spa.getDescription());
+                    tvPriceRange.setText("Khoảng giá: " + spa.getPriceRange());
+                    
+                    if (spa.getServices() != null) {
+                        tvServices.setText("Dịch vụ: " + String.join(", ", spa.getServices()));
                     }
-                })
-                .addOnFailureListener(e -> {
-                    String error = e.getMessage() != null ? e.getMessage() : "Lỗi không xác định";
-                    Toast.makeText(SpaProfileActivity.this, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-                });
+                    
+                    Glide.with(this).load(spa.getImageUrl()).placeholder(R.drawable.icon).into(ivSpaAvatar);
+                }
+            } else {
+                Toast.makeText(this, "Không tìm thấy thông tin spa", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 }

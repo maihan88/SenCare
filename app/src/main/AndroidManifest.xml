@@ -8,9 +8,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +28,10 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon, android:label">
         <activity
-            android:name=".activities.profile.UserFormActivity"
+            android:name=".activities.map.MapPickerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.dashboard.UserFormActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.

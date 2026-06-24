@@ -72,7 +72,7 @@
 
 
         <EditText
-            android:id="@+id/edtUsername"
+            android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:hint="Nhập tên đăng nhập của bạn"
             android:layout_height="55dp"
@@ -128,10 +128,5 @@
             android:textStyle="bold"
             android:clickable="true"
             android:focusable="true" />
-
-
-
     </LinearLayout>
 </LinearLayout>
-
-

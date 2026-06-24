@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -47,7 +46,6 @@ public class RegisterActivity extends AppCompatActivity {
         rbUser = findViewById(R.id.radiospinnerUser);
         rbSpa = findViewById(R.id.radiospinnerSpa);
         btnRegister = findViewById(R.id.btnLogin);
-
 
         btnRegister.setOnClickListener(v -> registerUser());
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
@@ -111,9 +109,14 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Hãy thiết lập hồ sơ.", Toast.LENGTH_SHORT).show();
 
-                    // Chuyển sang UserFormActivity để cài đặt profile (ảnh, tên hiển thị)
-                    Intent intent = new Intent(RegisterActivity.this, com.example.sencare.activities.profile.UserFormActivity.class);
-                    intent.putExtra("IS_EDIT_MODE", false);
+                    Intent intent;
+                    if ("spa_owner".equals(role)) {
+                        intent = new Intent(RegisterActivity.this, com.example.sencare.activities.spaowner.SpaFormActivity.class);
+                    } else {
+                        // Chuyển sang UserFormActivity để cài đặt profile (ảnh, tên hiển thị) cho user thường
+                        intent = new Intent(RegisterActivity.this, com.example.sencare.activities.dashboard.UserFormActivity.class);
+                        intent.putExtra("IS_EDIT_MODE", false);
+                    }
                     startActivity(intent);
                     finish();
                 })

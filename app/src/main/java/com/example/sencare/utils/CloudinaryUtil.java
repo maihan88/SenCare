@@ -11,9 +11,9 @@ public class CloudinaryUtil {
     public static void init(Context context) {
         if (!isInitialized) {
             Map<String, Object> config = new HashMap<>();
-            config.put("cloud_name", "dzgdqf5vs");
-            config.put("api_key", "916138796395978");
-            config.put("api_secret", "v9ygh40SMrWMXXzJqUm1bEzqb6Q");
+            config.put("cloud_name", BuildConfig.CLOUDINARY_CLOUD_NAME);
+            config.put("api_key", BuildConfig.CLOUDINARY_API_KEY);
+            config.put("api_secret", BuildConfig.CLOUDINARY_API_SECRET);
             MediaManager.init(context, config);
             isInitialized = true;
         }

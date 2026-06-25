@@ -1,13 +1,22 @@
 package com.example.sencare.activities.pet;
 
+
+
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+
+
+
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+
+
 
 import com.example.sencare.R;
 import com.example.sencare.adapters.PetAdapter;
@@ -21,24 +30,32 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+
+
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class PetListActivity extends AppCompatActivity {
 
+
+
+public class PetListActivity extends AppCompatActivity {
     private RecyclerView rvPetList;
     private PetAdapter petAdapter;
     private List<Pet> petList;
     private ImageView btnBack;
     private com.google.android.material.button.MaterialButton btnAddPet;
 
+
     private FirebaseFirestore db;
     private ListenerRegistration petListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_list);
+
 
         rvPetList = findViewById(R.id.rvPetList);
         btnBack = findViewById(R.id.btnBack);
@@ -50,24 +67,45 @@ public class PetListActivity extends AppCompatActivity {
         });
         petList = new ArrayList<>();
 
+
         petAdapter = new PetAdapter(petList);
         rvPetList.setLayoutManager(new LinearLayoutManager(this));
         rvPetList.setAdapter(petAdapter);
 
-        db = FirebaseFirestore.getInstance();
 
+        db = FirebaseFirestore.getInstance();
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         loadPetsFromFirestore();
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (petListener != null) {
+            petListener.remove();
+            petListener = null;
+        }
+    }
+
+
     private void loadPetsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         if (currentUser == null) {
             Log.e("PetListActivity", "Chưa đăng nhập, không thể load pet");
             return;
         }
 
+
         String uid = currentUser.getUid();
+
 
         petListener = db.collection("pets")
                 .whereEqualTo("ownerId", uid)
@@ -79,30 +117,29 @@ public class PetListActivity extends AppCompatActivity {
                         return;
                     }
 
+
                     if (value == null) {
                         return;
                     }
 
+
                     petList.clear();
+
 
                     for (QueryDocumentSnapshot doc : value) {
                         Pet pet = doc.toObject(Pet.class);
-
                         pet.setPetId(doc.getId());
-
                         petList.add(pet);
                     }
+
 
                     petAdapter.notifyDataSetChanged();
                 });
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (petListener != null) {
-            petListener.remove();
-        }
     }
 }

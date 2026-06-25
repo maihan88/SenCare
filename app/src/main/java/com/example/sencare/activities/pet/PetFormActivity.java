@@ -22,8 +22,8 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.example.sencare.BuildConfig;
 import com.example.sencare.R;
+import com.example.sencare.utils.CloudinaryUtil;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PetFormActivity extends AppCompatActivity {
+
     private ScrollView scrollPetForm;
     private EditText edtPetName, edtPetAge, edtPetSpecies, edtPetPersonality;
     private MaterialButton btnSave, btnGallery, btnCamera;
@@ -59,14 +60,15 @@ public class PetFormActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        initCloudinaryIfNeeded();
+        currentPetId = getIntent().getStringExtra("petId");
+
+        CloudinaryUtil.init(this);
+
         initViews();
         initImageLaunchers();
         initPermissionLaunchers();
 
         btnBack.setOnClickListener(v -> finish());
-
-        currentPetId = getIntent().getStringExtra("petId");
 
         if (currentPetId != null) {
             loadPetDataFromFirestore(currentPetId);
@@ -83,14 +85,15 @@ public class PetFormActivity extends AppCompatActivity {
         scrollPetForm = findViewById(R.id.scrollPetForm);
         btnBack = findViewById(R.id.btnBack);
         imgAvatarPreview = findViewById(R.id.imgAvatarPreview);
+
         TextView tvFormTitle = findViewById(R.id.tvFormTitle);
 
         if (currentPetId != null) {
             tvFormTitle.setText("Chỉnh sửa thú cưng");
-            loadPetDataFromFirestore(currentPetId);
         } else {
             tvFormTitle.setText("Thêm thú cưng");
         }
+
         btnGallery = findViewById(R.id.btnGallery);
         btnCamera = findViewById(R.id.btnCamera);
         btnSave = findViewById(R.id.btnSave);
@@ -172,16 +175,6 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
-    private void initCloudinaryIfNeeded() {
-        try {
-            MediaManager.get();
-        } catch (Exception e) {
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", BuildConfig.CLOUDINARY_CLOUD_NAME);
-            MediaManager.init(this, config);
-        }
-    }
-
     private void loadPetDataFromFirestore(String petId) {
         db.collection("pets").document(petId).get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -200,7 +193,11 @@ public class PetFormActivity extends AppCompatActivity {
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             Glide.with(this)
                                     .load(imageUrl)
+                                    .placeholder(R.drawable.bigcatontop)
+                                    .error(R.drawable.bigcatontop)
                                     .into(imgAvatarPreview);
+                        } else {
+                            imgAvatarPreview.setImageResource(R.drawable.bigcatontop);
                         }
                     } else {
                         Toast.makeText(this, "Không tìm thấy thú cưng!", Toast.LENGTH_SHORT).show();
@@ -271,7 +268,6 @@ public class PetFormActivity extends AppCompatActivity {
     private void uploadImageToCloudinaryThenSave(Map<String, Object> petData) {
         MediaManager.get()
                 .upload(selectedImageUri)
-                .unsigned(BuildConfig.CLOUDINARY_UPLOAD_PRESET)
                 .option("folder", "sencare/pets")
                 .callback(new UploadCallback() {
                     @Override

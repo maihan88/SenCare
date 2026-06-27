@@ -1,22 +1,19 @@
 package com.example.sencare.activities.dashboard;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
@@ -29,36 +26,39 @@ import com.example.sencare.models.User;
 import com.example.sencare.utils.CloudinaryUtil;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
-import com.example.sencare.utils.ImageUtil;
 import com.google.android.material.button.MaterialButton;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class UserFormActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private static final int CAPTURE_IMAGE_REQUEST = 2;
-    private static final String DEFAULT_AVATAR = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"; // Link ảnh mặc định
+    private static final String DEFAULT_AVATAR = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg";
 
     private ImageView ivAvatar;
     private EditText etDisplayName;
     private MaterialButton btnChoosePhoto, btnTakePhoto, btnSave, btnClose;
     private Uri imageUri;
+    private Uri cameraImageUri;
     private String currentUid;
     private FirestoreHelper dbHelper;
     private boolean isEditMode = false;
 
+    private ActivityResultLauncher<String> galleryLauncher;
+    private ActivityResultLauncher<Uri> cameraLauncher;
+    private ActivityResultLauncher<String> cameraPermissionLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        registerLaunchers();
+
         setContentView(R.layout.activity_user_form);
 
         CloudinaryUtil.init(this);
         dbHelper = new FirestoreHelper();
         currentUid = FirebaseUtil.getCurrentUserId();
 
-        // Kiểm tra xem là chế độ chỉnh sửa hay thiết lập ban đầu
         isEditMode = getIntent().getBooleanExtra("IS_EDIT_MODE", false);
 
         initViews();
@@ -67,6 +67,39 @@ public class UserFormActivity extends AppCompatActivity {
         if (isEditMode) {
             loadUserData();
         }
+    }
+
+    private void registerLaunchers() {
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        imageUri = uri;
+                        ivAvatar.setImageURI(uri);
+                    }
+                }
+        );
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                success -> {
+                    if (success && cameraImageUri != null) {
+                        imageUri = cameraImageUri;
+                        Glide.with(this).load(imageUri).into(ivAvatar);
+                    }
+                }
+        );
+
+        cameraPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        launchCamera();
+                    } else {
+                        Toast.makeText(this, "Cần quyền camera để chụp ảnh", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private void initViews() {
@@ -101,55 +134,26 @@ public class UserFormActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
-        } else {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, PICK_IMAGE_REQUEST);
-        }
+        galleryLauncher.launch("image/*");
     }
 
     private void openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 101);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            launchCamera();
         } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PICK_IMAGE_REQUEST && data != null) {
-                imageUri = data.getData();
-                ivAvatar.setImageURI(imageUri);
-            } else if (requestCode == CAPTURE_IMAGE_REQUEST && data != null) {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                if (bitmap != null) {
-                    ivAvatar.setImageBitmap(bitmap);
-                    imageUri = ImageUtil.getImageUri(this, bitmap);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, "Cần quyền truy cập bộ nhớ để chọn ảnh", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == 101) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Cần quyền Camera để chụp ảnh", Toast.LENGTH_SHORT).show();
-            }
+    private void launchCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_" + System.currentTimeMillis() + ".jpg");
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        cameraImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        if (cameraImageUri != null) {
+            cameraLauncher.launch(cameraImageUri);
+        } else {
+            Toast.makeText(this, "Không tạo được file ảnh", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -198,7 +202,7 @@ public class UserFormActivity extends AppCompatActivity {
         dbHelper.getUser(currentUid).addOnSuccessListener(documentSnapshot -> {
             User user = documentSnapshot.toObject(User.class);
             if (user == null) user = new User();
-            
+
             user.setUid(currentUid);
             user.setFullName(displayName);
             if (avatarUrl != null) {
@@ -210,7 +214,6 @@ public class UserFormActivity extends AppCompatActivity {
                 if (isEditMode) {
                     finish();
                 } else {
-                    // Sau khi thiết lập xong hồ sơ -> Đăng xuất và quay về Login
                     FirebaseUtil.getAuth().signOut();
                     Intent intent = new Intent(UserFormActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

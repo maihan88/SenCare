@@ -80,11 +80,27 @@ public class DiaryTimelineActivity extends AppCompatActivity {
 
         adapter = new TimelineDateAdapter(timelineList);
         rvDiaryList.setAdapter(adapter);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         loadDiariesAndGroupByDate();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (diaryListener != null) {
+            diaryListener.remove();
+            diaryListener = null;
+        }
+    }
+
     private void loadDiariesAndGroupByDate() {
+        if (diaryListener != null) {
+            diaryListener.remove();
+        }
         diaryListener = db.collection("diaries")
                 .whereEqualTo("petId", petId)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -127,9 +143,6 @@ public class DiaryTimelineActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (diaryListener != null) {
-            diaryListener.remove();
-        }
     }
 
     public static class TimelineGroup {

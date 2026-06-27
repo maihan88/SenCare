@@ -45,9 +45,9 @@ public class FirestoreHelper {
         return db.collection(COLLECTION_SPAS).whereEqualTo("ownerId", ownerId).get();
     }
 
-    // Lấy thông tin người dùng theo tên (fullName) - dùng cho login bằng username
+    // Lấy thông tin người dùng theo username - dùng cho login bằng username
     public Task<com.google.firebase.firestore.QuerySnapshot> getUserByUsername(String username) {
-        return db.collection(COLLECTION_USERS).whereEqualTo("fullName", username).limit(1).get();
+        return db.collection(COLLECTION_USERS).whereEqualTo("username", username).limit(1).get();
     }
 
     // Bạn có thể thêm các hàm truy vấn khác ở đây

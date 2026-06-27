@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sencare.R;
@@ -37,9 +37,9 @@ public class TimelineDateAdapter extends RecyclerView.Adapter<TimelineDateAdapte
         // Set chữ Ngày Tháng Năm
         holder.tvTimelineDate.setText(currentGroup.getDate());
 
-        // Setup cái danh sách ảnh cuộn ngang bên trong
         TimelineImageAdapter imageAdapter = new TimelineImageAdapter(currentGroup.getDiaries());
-        holder.rvTimelineImages.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        holder.rvTimelineImages.setLayoutManager(new GridLayoutManager(holder.itemView.getContext(), 3));
+        holder.rvTimelineImages.setNestedScrollingEnabled(false);
         holder.rvTimelineImages.setAdapter(imageAdapter);
     }
 

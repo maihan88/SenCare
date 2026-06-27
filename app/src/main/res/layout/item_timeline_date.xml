@@ -14,26 +14,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/tvTimelineDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngày__Tháng__Năm__"
             android:textColor="#333333"
             android:textSize="16sp"
-            android:textStyle="normal"
-            tools:text="15_06_2026" />
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            tools:text="25/06/2026" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTimelineImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:clipToPadding="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:nestedScrollingEnabled="false"
             tools:listitem="@layout/itemdiaryimage" />
 
     </LinearLayout>

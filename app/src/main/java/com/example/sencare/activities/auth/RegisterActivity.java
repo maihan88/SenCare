@@ -98,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void saveUserToFirestore(String uid, String username, String email, String role) {
         User user = new User();
         user.setUid(uid);
-        user.setFullName(username);
+        user.setUsername(username);
         user.setEmail(email);
         user.setRole(role);
         user.setHasSpaProfile(false);

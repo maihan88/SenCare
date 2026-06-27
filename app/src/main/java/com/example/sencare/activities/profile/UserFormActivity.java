@@ -91,7 +91,7 @@ public class UserFormActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 currentUser = documentSnapshot.toObject(User.class);
                 if (currentUser != null) {
-                    etDisplayName.setText(currentUser.getUsername());
+                    etDisplayName.setText(currentUser.getFullName());
                     if (currentUser.getAvatarUrl() != null && !currentUser.getAvatarUrl().isEmpty()) {
                         Glide.with(this).load(currentUser.getAvatarUrl()).into(ivAvatar);
                     }
@@ -229,7 +229,7 @@ public class UserFormActivity extends AppCompatActivity {
 
 
     private void updateAndFinish(String username, String url, String publicId) {
-        currentUser.setUsername(username);
+        currentUser.setFullName(username);
         currentUser.setAvatarUrl(url);
         currentUser.setAvatarPublicId(publicId);
 

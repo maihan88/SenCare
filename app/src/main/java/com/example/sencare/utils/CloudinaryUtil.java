@@ -2,6 +2,8 @@ package com.example.sencare.utils;
 
 import android.content.Context;
 import com.cloudinary.android.MediaManager;
+import com.example.sencare.BuildConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 

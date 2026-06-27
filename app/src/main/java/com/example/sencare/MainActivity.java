@@ -1,0 +1,35 @@
+package com.example.sencare;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.sencare.activities.auth.LoginActivity;
+import com.example.sencare.activities.auth.RegisterActivity;
+import com.google.android.material.button.MaterialButton;
+
+public class MainActivity extends AppCompatActivity {
+
+    private MaterialButton btnLogin, btnRegister;
+    private TextView tvForgotPassword;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // 11.1 Luồng mở app: Không tự động chuyển hướng, luôn hiện MainActivity
+        setContentView(R.layout.activity_main);
+
+        btnLogin = findViewById(R.id.btnLogin);
+        btnRegister = findViewById(R.id.btnRegister);
+
+        btnLogin.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        btnRegister.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, RegisterActivity.class)));
+    }
+}

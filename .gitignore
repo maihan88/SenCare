@@ -1,0 +1,26 @@
+*.iml
+.gradle
+/local.properties
+local.properties
+
+# Android Studio
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Build files
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Secrets / API keys
+secrets.properties
+/app/google-services.json
+
+# Mac
+.DS_Store

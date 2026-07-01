@@ -27,8 +27,11 @@
                 android:id="@+id/btnBack"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/backbutton" />
+                android:background="@drawable/bg_exit"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/back"
+                app:tint="@color/white" />
         </androidx.cardview.widget.CardView>
 
         <View

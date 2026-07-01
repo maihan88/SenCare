@@ -5,6 +5,83 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp"
     tools:context=".activities.booking.SpaSearchActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_exit"
+            android:src="@drawable/back"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            app:tint="@color/white" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="SenCare Logo"
+        android:src="@drawable/logo" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:fontFamily="serif"
+        android:text="Tìm Spa thú cưng"
+        android:textColor="@color/text_green"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etDistance"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="Nhập số km"
+        android:inputType="number"
+        android:paddingHorizontal="16dp"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/accent_yellow"
+        android:text="Tìm"
+        android:textAllCaps="false"
+        android:textColor="@color/text_green"
+        android:textSize="18sp"
+        app:cornerRadius="20dp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btnBookingList"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@color/accent_yellow"
+        android:text="Danh sách lịch hẹn"
+        android:textAllCaps="false"
+        android:textColor="@color/text_green"
+        android:textSize="18sp"
+        app:cornerRadius="20dp" />
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.sencare.models;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.PropertyName;
 
 public class VetClinic {
     private String clinicId;
@@ -69,10 +70,12 @@ public class VetClinic {
         this.latitude = latitude;
     }
 
+    @PropertyName("Longitude")
     public double getLongitude() {
         return longitude;
     }
 
+    @PropertyName("Longitude")
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }

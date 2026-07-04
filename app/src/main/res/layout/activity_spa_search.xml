@@ -5,26 +5,29 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_bg"
+    android:background="@drawable/bg_app"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp"
     tools:context=".activities.booking.SpaSearchActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start">
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_exit"
-            android:src="@drawable/back"
-            android:padding="8dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_back_circle"
+            android:src="@drawable/ic_arrow_back"
+            android:padding="10dp"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/action_back"
             app:tint="@color/white" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <ImageView
         android:layout_width="200dp"
@@ -33,37 +36,36 @@
         android:contentDescription="SenCare Logo"
         android:src="@drawable/logo" />
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:fontFamily="serif"
         android:text="Tìm Spa thú cưng"
-        android:textColor="@color/text_green"
+        android:textColor="@color/text_primary"
         android:textSize="28sp"
         android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etDistance"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="52dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/bg_edittext"
         android:hint="Nhập số km"
         android:inputType="number"
         android:paddingHorizontal="16dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_muted"
         android:textAlignment="center" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSearch"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        style="@style/Widget.SenCare.Button.Primary"
+        android:layout_width="140dp"
+        android:layout_height="52dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/accent_yellow"
         android:text="Tìm"
-        android:textAllCaps="false"
-        android:textColor="@color/text_green"
         android:textSize="18sp"
         app:cornerRadius="20dp" />
 
@@ -72,15 +74,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBookingList"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
+        style="@style/Widget.SenCare.Button.Accent"
+        android:layout_width="240dp"
+        android:layout_height="52dp"
         android:layout_marginBottom="40dp"
-        android:backgroundTint="@color/accent_yellow"
         android:text="Danh sách lịch hẹn"
-        android:textAllCaps="false"
-        android:textColor="@color/text_green"
         android:textSize="18sp"
         app:cornerRadius="20dp" />
 

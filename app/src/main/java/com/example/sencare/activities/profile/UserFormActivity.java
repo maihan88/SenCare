@@ -1,6 +1,5 @@
 package com.example.sencare.activities.profile;
 
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,10 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 
 import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
@@ -27,18 +24,14 @@ import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.button.MaterialButton;
 
-
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-
 public class UserFormActivity extends AppCompatActivity {
-
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
     private static final String DEFAULT_AVATAR_URL = "https://res.cloudinary.com/dqofre7ms/image/upload/v1741513264/sample.jpg";
-
 
     private ImageView ivAvatar;
     private EditText etDisplayName;
@@ -50,17 +43,14 @@ public class UserFormActivity extends AppCompatActivity {
     private FirestoreHelper dbHelper;
     private User currentUser;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_form);
 
-
         CloudinaryUtil.init(this);
         dbHelper = new FirestoreHelper();
         isEditMode = getIntent().getBooleanExtra("IS_EDIT_MODE", false);
-
 
         ivAvatar = findViewById(R.id.ivAvatar);
         etDisplayName = findViewById(R.id.etDisplayName);
@@ -69,23 +59,45 @@ public class UserFormActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         btnClose = findViewById(R.id.btnClose);
 
-
         loadUserData();
 
+        btnChoosePhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        });
 
-        btnChoosePhoto.setOnClickListener(v -> openGallery());
         btnTakePhoto.setOnClickListener(v -> openCamera());
-        btnSave.setOnClickListener(v -> validateAndSave());
+
+        btnSave.setOnClickListener(v -> {
+            String username = etDisplayName.getText().toString().trim();
+            if (username.isEmpty()) {
+                etDisplayName.setError("Vui lòng nhập tên hiển thị");
+                return;
+            }
+
+            btnSave.setEnabled(false);
+            if (imageUri != null) {
+                uploadToCloudinary(imageUri, username);
+            } else if (imageBitmap != null) {
+                uploadToCloudinary(imageBitmap, username);
+            } else {
+                // Trường hợp không chọn ảnh mới
+                String url = (currentUser != null && currentUser.getAvatarUrl() != null && !currentUser.getAvatarUrl().isEmpty())
+                        ? currentUser.getAvatarUrl() : DEFAULT_AVATAR_URL;
+                String publicId = (currentUser != null) ? currentUser.getAvatarPublicId() : "";
+                saveToFirestore(username, url, publicId);
+            }
+        });
+
         if (btnClose != null) {
             btnClose.setOnClickListener(v -> finish());
         }
     }
 
-
+    // Tải dữ liệu người dùng hiện tại lên form
     private void loadUserData() {
         String uid = FirebaseUtil.getCurrentUserId();
         if (uid == null) return;
-
 
         dbHelper.getUser(uid).addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -100,13 +112,7 @@ public class UserFormActivity extends AppCompatActivity {
         });
     }
 
-
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-
+    // Mở camera chụp ảnh (được gọi cả từ nút chụp ảnh lẫn callback cấp quyền)
     private void openCamera() {
         if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -118,7 +124,6 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @androidx.annotation.NonNull String[] permissions, @androidx.annotation.NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -128,7 +133,6 @@ public class UserFormActivity extends AppCompatActivity {
             Toast.makeText(this, "Bạn cần cấp quyền Camera để chụp ảnh", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -146,30 +150,7 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-
-    private void validateAndSave() {
-        String username = etDisplayName.getText().toString().trim();
-        if (username.isEmpty()) {
-            etDisplayName.setError("Vui lòng nhập tên hiển thị");
-            return;
-        }
-
-
-        btnSave.setEnabled(false);
-        if (imageUri != null) {
-            uploadToCloudinary(imageUri, username);
-        } else if (imageBitmap != null) {
-            uploadToCloudinary(imageBitmap, username);
-        } else {
-            // Trường hợp không chọn ảnh mới
-            String url = (currentUser != null && currentUser.getAvatarUrl() != null && !currentUser.getAvatarUrl().isEmpty())
-                    ? currentUser.getAvatarUrl() : DEFAULT_AVATAR_URL;
-            String publicId = (currentUser != null) ? currentUser.getAvatarPublicId() : "";
-            saveToFirestore(username, url, publicId);
-        }
-    }
-
-
+    // Upload ảnh (Uri từ thư viện hoặc Bitmap từ camera) lên Cloudinary rồi lưu
     private void uploadToCloudinary(Object imageData, String username) {
         UploadCallback callback = new UploadCallback() {
             @Override
@@ -191,7 +172,6 @@ public class UserFormActivity extends AppCompatActivity {
             public void onReschedule(String requestId, ErrorInfo error) {}
         };
 
-
         if (imageData instanceof Uri) {
             MediaManager.get().upload((Uri) imageData).callback(callback).dispatch();
         } else if (imageData instanceof Bitmap) {
@@ -202,14 +182,13 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-
+    // Lưu thông tin người dùng vào Firestore (lấy user hiện tại trước nếu chưa có)
     private void saveToFirestore(String username, String url, String publicId) {
         String uid = FirebaseUtil.getCurrentUserId();
         if (uid == null) {
             btnSave.setEnabled(true);
             return;
         }
-
 
         if (currentUser == null) {
             dbHelper.getUser(uid).addOnSuccessListener(doc -> {
@@ -227,12 +206,10 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateAndFinish(String username, String url, String publicId) {
         currentUser.setFullName(username);
         currentUser.setAvatarUrl(url);
         currentUser.setAvatarPublicId(publicId);
-
 
         dbHelper.saveUser(currentUser).addOnSuccessListener(aVoid -> {
             Toast.makeText(UserFormActivity.this, "Lưu thành công", Toast.LENGTH_SHORT).show();
@@ -249,5 +226,3 @@ public class UserFormActivity extends AppCompatActivity {
         });
     }
 }
-
-

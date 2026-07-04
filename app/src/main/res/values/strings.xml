@@ -1,5 +1,33 @@
 <resources>
     <string name="app_name">SenCare</string>
     <string name="title_activity_map_test">MapTest</string>
-    <string name="google_maps_key">AIzaSyCZ_hWLClKAdGVgoAnnaITTBMEnvrnKunA</string>
+
+    <!-- ===== Chữ dùng lại (UI) ===== -->
+    <string name="action_login">Đăng nhập</string>
+    <string name="action_register">Đăng ký</string>
+    <string name="action_logout">Đăng xuất</string>
+    <string name="action_back">Quay lại</string>
+    <string name="action_close">Đóng</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_edit_info">Chỉnh sửa thông tin</string>
+    <string name="action_forgot_password">Quên mật khẩu?</string>
+    <string name="action_recover_password">Khôi phục mật khẩu</string>
+
+    <string name="label_username">Tên đăng nhập</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="label_confirm_password">Xác nhận mật khẩu</string>
+    <string name="label_email">Địa chỉ Email</string>
+    <string name="label_role">Vai trò</string>
+
+    <string name="hint_username">Nhập tên đăng nhập của bạn</string>
+    <string name="hint_password">Nhập mật khẩu từ 7-13 ký tự</string>
+    <string name="hint_email">Nhập Email có đuôi @gmail</string>
+
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_profile">Cá nhân</string>
+
+    <string name="menu_pet">Thú cưng</string>
+    <string name="menu_diary">Nhật ký</string>
+    <string name="menu_vet">Trạm thú y</string>
+    <string name="menu_spa">Đặt lịch spa</string>
 </resources>

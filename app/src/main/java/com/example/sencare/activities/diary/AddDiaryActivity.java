@@ -23,10 +23,11 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.example.sencare.R;
 import com.example.sencare.utils.CloudinaryUtil;
+import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class AddDiaryActivity extends AppCompatActivity {
     private View btnUp, btnGallery, btnCamera;
     private EditText edtCaption;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private FirebaseAuth mAuth;
 
     private String petId;
@@ -53,8 +54,8 @@ public class AddDiaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_diary);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        dbHelper = new FirestoreHelper();
+        mAuth = FirebaseUtil.getAuth();
 
         CloudinaryUtil.init(this);
 
@@ -66,7 +67,13 @@ public class AddDiaryActivity extends AppCompatActivity {
             return;
         }
 
-        initViews();
+        btnBack = findViewById(R.id.btnBack);
+        btnUp = findViewById(R.id.btnUp);
+        btnGallery = findViewById(R.id.btnGallery);
+        btnCamera = findViewById(R.id.btnCamera);
+        imgPreview = findViewById(R.id.imgPreview);
+        edtCaption = findViewById(R.id.edtCaption);
+
         initImageLaunchers();
         initPermissionLaunchers();
 
@@ -74,20 +81,33 @@ public class AddDiaryActivity extends AppCompatActivity {
 
         btnGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
 
-        btnCamera.setOnClickListener(v -> openCameraWithPermissionCheck());
+        btnCamera.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+        });
 
-        btnUp.setOnClickListener(v -> saveDiary());
+        btnUp.setOnClickListener(v -> {
+            if (selectedImageUri == null) {
+                Toast.makeText(this, "Vui lòng chọn hoặc chụp ảnh!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            setLoading(true);
+            uploadImageToCloudinary(currentUser.getUid());
+        });
     }
 
-    private void initViews() {
-        btnBack = findViewById(R.id.btnBack);
-        btnUp = findViewById(R.id.btnUp);
-        btnGallery = findViewById(R.id.btnGallery);
-        btnCamera = findViewById(R.id.btnCamera);
-        imgPreview = findViewById(R.id.imgPreview);
-        edtCaption = findViewById(R.id.edtCaption);
-    }
-
+    // Đăng ký launcher chọn ảnh từ thư viện và chụp ảnh (dùng cho listener của nút Gallery/Camera)
     private void initImageLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -116,6 +136,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
+    // Đăng ký launcher xin quyền camera (dùng cho listener của nút Camera)
     private void initPermissionLaunchers() {
         cameraPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -129,15 +150,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
-    private void openCameraWithPermissionCheck() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            openCamera();
-        } else {
-            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-    }
-
+    // Mở camera (được gọi cả từ nút Camera lẫn callback cấp quyền)
     private void openCamera() {
         cameraImageUri = createImageUri();
 
@@ -159,23 +172,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
-    private void saveDiary() {
-        if (selectedImageUri == null) {
-            Toast.makeText(this, "Vui lòng chọn hoặc chụp ảnh!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser == null) {
-            Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        setLoading(true);
-        uploadImageToCloudinary(currentUser.getUid());
-    }
-
+    // Upload ảnh lên Cloudinary rồi lưu nhật ký
     private void uploadImageToCloudinary(String ownerId) {
         MediaManager.get()
                 .upload(selectedImageUri)
@@ -219,7 +216,7 @@ public class AddDiaryActivity extends AppCompatActivity {
     private void saveDiaryToFirestore(String ownerId, String imageUrl, String imagePublicId) {
         String caption = edtCaption.getText().toString().trim();
 
-        String diaryId = db.collection("diaries").document().getId();
+        String diaryId = dbHelper.newDiaryId();
 
         Map<String, Object> diaryData = new HashMap<>();
         diaryData.put("diaryId", diaryId);
@@ -232,9 +229,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         diaryData.put("createdAt", Timestamp.now());
         diaryData.put("updatedAt", Timestamp.now());
 
-        db.collection("diaries")
-                .document(diaryId)
-                .set(diaryData)
+        dbHelper.saveDiary(diaryId, diaryData)
                 .addOnSuccessListener(aVoid -> {
                     setLoading(false);
                     Toast.makeText(this, "Đã thêm nhật ký!", Toast.LENGTH_SHORT).show();

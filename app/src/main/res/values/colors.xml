@@ -1,13 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!-- ===== Base ===== -->
+    <color name="black">#FF1B1B1B</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary_bg">#4DD8E1</color>
-    <color name="secondary_bg">#44C7AE</color>
-    <color name="accent_yellow">#E7FD7B</color>
-    <color name="text_green">#1B5E40</color>
-    <color name="text_blue">#4A89B0</color>
-    <color name="btn_back">#FF7171</color>
-    <color name="form_bg">#80FFFFFF</color>
-    <color name="card_bg">#D9ED92</color>
+
+    <!-- ===== Mint (màu chủ đạo) ===== -->
+    <color name="mint">#66CDAA</color>            <!-- màu chính -->
+    <color name="mint_dark">#3FA98C</color>       <!-- viền / trạng thái nhấn -->
+    <color name="mint_light">#A8E6CF</color>      <!-- nhấn nhẹ -->
+    <color name="mint_pale">#D8F3E8</color>       <!-- nền thẻ mềm -->
+    <color name="mint_surface">#F0FBF7</color>    <!-- nền màn hình -->
+
+    <!-- ===== Accent pastel (điểm nhấn hài hòa) ===== -->
+    <color name="accent_yellow">#FFE082</color>      <!-- vàng pastel -->
+    <color name="accent_yellow_dark">#F2C14E</color>
+    <color name="accent_coral">#FF8A80</color>       <!-- đỏ/cam pastel (nút quay lại) -->
+    <color name="accent_coral_dark">#E5726A</color>
+    <color name="accent_sky">#7FC8F0</color>         <!-- xanh dương pastel (chỉ đường / thông tin) -->
+    <color name="accent_sky_dark">#4FA9DC</color>
+    <color name="accent_peach">#FFB59E</color>       <!-- đào pastel -->
+    <color name="accent_lavender">#B9A7E0</color>    <!-- tím pastel -->
+
+    <!-- ===== Nền pastel mềm cho thẻ chức năng ===== -->
+    <color name="soft_mint">#DCF5EC</color>
+    <color name="soft_yellow">#FFF3CC</color>
+    <color name="soft_coral">#FFE1DC</color>
+    <color name="soft_sky">#DDF0FB</color>
+    <color name="soft_lavender">#EBE4FA</color>
+
+    <!-- ===== Text ===== -->
+    <color name="text_primary">#1F4D3D</color>      <!-- tiêu đề (xanh đậm) -->
+    <color name="text_secondary">#5B7A6E</color>    <!-- phụ -->
+    <color name="text_muted">#9AA5A0</color>        <!-- mờ / hint -->
+    <color name="on_primary">#FFFFFF</color>        <!-- chữ trên nền mint -->
+    <color name="on_accent">#5A4B12</color>         <!-- chữ trên nền vàng -->
+
+    <!-- ===== Aliases tương thích tên cũ (đã ánh xạ sang bảng màu mới) ===== -->
+    <color name="primary_bg">#66CDAA</color>
+    <color name="secondary_bg">#3FA98C</color>
+    <color name="text_green">#1F4D3D</color>
+    <color name="text_blue">#2F6E5A</color>
+    <color name="btn_back">#FF8A80</color>
+    <color name="form_bg">#F2FFFFFF</color>
+    <color name="card_bg">#FFFFFFFF</color>
 </resources>

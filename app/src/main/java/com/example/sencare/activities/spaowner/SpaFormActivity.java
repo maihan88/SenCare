@@ -66,8 +66,34 @@ public class SpaFormActivity extends AppCompatActivity {
         CloudinaryUtil.init(this);
         dbHelper = new FirestoreHelper();
 
-        initViews();
-        handleIntent();
+        etSpaName = findViewById(R.id.etSpaName);
+        etAddress = findViewById(R.id.etAddress);
+        etPhone = findViewById(R.id.etPhone);
+        etDescription = findViewById(R.id.etDescription);
+        etServices = findViewById(R.id.etServices);
+        etPriceMin = findViewById(R.id.etPriceMin);
+        etPriceMax = findViewById(R.id.etPriceMax);
+        etLocation = findViewById(R.id.etLocation);
+        btnPickMap = findViewById(R.id.btnPickMap);
+        btnBack = findViewById(R.id.btnBack);
+        ivSpaImage = findViewById(R.id.ivSpaImage);
+        btnSelectImage = findViewById(R.id.btnSelectImage);
+        btnCaptureImage = findViewById(R.id.btnCaptureImage);
+        btnSave = findViewById(R.id.btnSave);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Đang lưu thông tin...");
+        progressDialog.setCancelable(false);
+
+        // Chế độ chỉnh sửa (có SPA_ID) hoặc tạo mới (sinh id mới)
+        String spaId = getIntent().getStringExtra("SPA_ID");
+        if (spaId != null) {
+            isEditMode = true;
+            currentSpaId = spaId;
+            loadSpaData(spaId);
+        } else {
+            currentSpaId = UUID.randomUUID().toString();
+        }
 
         btnBack.setOnClickListener(v -> finish());
 
@@ -89,9 +115,32 @@ public class SpaFormActivity extends AppCompatActivity {
             }
         });
 
-        btnSave.setOnClickListener(v -> validateAndSave());
+        btnSave.setOnClickListener(v -> {
+            String name = etSpaName.getText().toString().trim();
+            String address = etAddress.getText().toString().trim();
+            String phone = etPhone.getText().toString().trim();
+            String description = etDescription.getText().toString().trim();
+            String servicesStr = etServices.getText().toString().trim();
+            String priceMinStr = etPriceMin.getText().toString().trim();
+            String priceMaxStr = etPriceMax.getText().toString().trim();
+            String priceRange = buildPriceRange(priceMinStr, priceMaxStr);
+
+            if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin bắt buộc", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (selectedImageUri != null) {
+                uploadImageAndSave(name, address, phone, description, servicesStr, priceRange);
+            } else if (uploadedImageUrl != null) {
+                saveSpaToFirestore(name, address, phone, description, servicesStr, priceRange);
+            } else {
+                Toast.makeText(this, "Vui lòng chọn ảnh spa", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    // Mở camera chụp ảnh (được gọi cả từ nút chụp ảnh lẫn callback cấp quyền)
     private void openCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, IMAGE_CAPTURE_REQUEST_CODE);
@@ -109,38 +158,7 @@ public class SpaFormActivity extends AppCompatActivity {
         }
     }
 
-    private void initViews() {
-        etSpaName = findViewById(R.id.etSpaName);
-        etAddress = findViewById(R.id.etAddress);
-        etPhone = findViewById(R.id.etPhone);
-        etDescription = findViewById(R.id.etDescription);
-        etServices = findViewById(R.id.etServices);
-        etPriceMin = findViewById(R.id.etPriceMin);
-        etPriceMax = findViewById(R.id.etPriceMax);
-        etLocation = findViewById(R.id.etLocation);
-        btnPickMap = findViewById(R.id.btnPickMap);
-        btnBack = findViewById(R.id.btnBack);
-        ivSpaImage = findViewById(R.id.ivSpaImage);
-        btnSelectImage = findViewById(R.id.btnSelectImage);
-        btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        btnSave = findViewById(R.id.btnSave);
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Đang lưu thông tin...");
-        progressDialog.setCancelable(false);
-    }
-
-    private void handleIntent() {
-        String spaId = getIntent().getStringExtra("SPA_ID");
-        if (spaId != null) {
-            isEditMode = true;
-            currentSpaId = spaId;
-            loadSpaData(spaId);
-        } else {
-            currentSpaId = UUID.randomUUID().toString();
-        }
-    }
-
+    // Tải dữ liệu spa khi ở chế độ chỉnh sửa
     private void loadSpaData(String spaId) {
         dbHelper.getSpa(spaId).addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -158,11 +176,11 @@ public class SpaFormActivity extends AppCompatActivity {
                     latitude = spa.getLatitude();
                     longitude = spa.getLongitude();
                     etLocation.setText(latitude + ", " + longitude);
-                    
+
                     if (spa.getServices() != null) {
                         etServices.setText(String.join(", ", spa.getServices()));
                     }
-                    
+
                     uploadedImageUrl = spa.getImageUrl();
                     uploadedPublicId = spa.getImagePublicId();
                     Glide.with(this).load(uploadedImageUrl).into(ivSpaImage);
@@ -171,6 +189,7 @@ public class SpaFormActivity extends AppCompatActivity {
         });
     }
 
+    // Ghép khoảng giá từ giá tối thiểu và tối đa
     private String buildPriceRange(String minStr, String maxStr) {
         if (minStr.isEmpty() && maxStr.isEmpty()) return "";
         String min = minStr.isEmpty() ? "0" : minStr;
@@ -180,30 +199,7 @@ public class SpaFormActivity extends AppCompatActivity {
         return fMin + " - " + fMax + " VNĐ";
     }
 
-    private void validateAndSave() {
-        String name = etSpaName.getText().toString().trim();
-        String address = etAddress.getText().toString().trim();
-        String phone = etPhone.getText().toString().trim();
-        String description = etDescription.getText().toString().trim();
-        String servicesStr = etServices.getText().toString().trim();
-        String priceMinStr = etPriceMin.getText().toString().trim();
-        String priceMaxStr = etPriceMax.getText().toString().trim();
-        String priceRange = buildPriceRange(priceMinStr, priceMaxStr);
-
-        if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin bắt buộc", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (selectedImageUri != null) {
-            uploadImageAndSave(name, address, phone, description, servicesStr, priceRange);
-        } else if (uploadedImageUrl != null) {
-            saveSpaToFirestore(name, address, phone, description, servicesStr, priceRange);
-        } else {
-            Toast.makeText(this, "Vui lòng chọn ảnh spa", Toast.LENGTH_SHORT).show();
-        }
-    }
-
+    // Upload ảnh lên Cloudinary rồi lưu spa
     private void uploadImageAndSave(String name, String address, String phone, String description, String servicesStr, String priceRange) {
         btnSave.setEnabled(false);
         progressDialog.show();
@@ -230,10 +226,11 @@ public class SpaFormActivity extends AppCompatActivity {
                 }).dispatch();
     }
 
+    // Lưu thông tin spa vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void saveSpaToFirestore(String name, String address, String phone, String description, String servicesStr, String priceRange) {
         if (!progressDialog.isShowing()) progressDialog.show();
         ArrayList<String> servicesList = new ArrayList<>(Arrays.asList(servicesStr.split(",\\s*")));
-        
+
         Spa spa = new Spa();
         spa.setSpaId(currentSpaId);
         spa.setOwnerId(FirebaseUtil.getCurrentUserId());
@@ -262,6 +259,7 @@ public class SpaFormActivity extends AppCompatActivity {
         });
     }
 
+    // Cập nhật thông tin spa cho user rồi kết thúc màn hình
     private void updateUserAndFinish() {
         String uid = FirebaseUtil.getCurrentUserId();
         dbHelper.updateUserSpaInfo(uid, currentSpaId, true).addOnSuccessListener(aVoid -> {

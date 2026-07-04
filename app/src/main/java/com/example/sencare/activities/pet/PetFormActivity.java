@@ -24,12 +24,12 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.example.sencare.R;
 import com.example.sencare.utils.CloudinaryUtil;
+import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class PetFormActivity extends AppCompatActivity {
     private MaterialButton btnSave, btnGallery, btnCamera;
     private ImageView btnBack, imgAvatarPreview;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private FirebaseAuth mAuth;
 
     private String currentPetId = null;
@@ -57,14 +57,31 @@ public class PetFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_form);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        dbHelper = new FirestoreHelper();
+        mAuth = FirebaseUtil.getAuth();
 
         currentPetId = getIntent().getStringExtra("petId");
 
         CloudinaryUtil.init(this);
 
-        initViews();
+        scrollPetForm = findViewById(R.id.scrollPetForm);
+        btnBack = findViewById(R.id.btnBack);
+        imgAvatarPreview = findViewById(R.id.imgAvatarPreview);
+        btnGallery = findViewById(R.id.btnGallery);
+        btnCamera = findViewById(R.id.btnCamera);
+        btnSave = findViewById(R.id.btnSave);
+        edtPetName = findViewById(R.id.edtPetName);
+        edtPetAge = findViewById(R.id.edtPetAge);
+        edtPetSpecies = findViewById(R.id.edtPetSpecies);
+        edtPetPersonality = findViewById(R.id.edtPetPersonality);
+
+        TextView tvFormTitle = findViewById(R.id.tvFormTitle);
+        if (currentPetId != null) {
+            tvFormTitle.setText("Chỉnh sửa thú cưng");
+        } else {
+            tvFormTitle.setText("Thêm thú cưng");
+        }
+
         initImageLaunchers();
         initPermissionLaunchers();
 
@@ -76,34 +93,72 @@ public class PetFormActivity extends AppCompatActivity {
 
         btnGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
 
-        btnCamera.setOnClickListener(v -> openCameraWithPermissionCheck());
+        btnCamera.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+        });
 
-        btnSave.setOnClickListener(v -> savePetToFirestore());
+        btnSave.setOnClickListener(v -> {
+            String name = edtPetName.getText().toString().trim();
+            String ageStr = edtPetAge.getText().toString().trim();
+            String species = edtPetSpecies.getText().toString().trim();
+            String personality = edtPetPersonality.getText().toString().trim();
+
+            if (name.isEmpty() || ageStr.isEmpty() || species.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập tên, tuổi và giống loài!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int age;
+            try {
+                age = Integer.parseInt(ageStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Tuổi phải là số!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (age < 0) {
+                Toast.makeText(this, "Tuổi không hợp lệ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String ownerId = currentUser.getUid();
+
+            Map<String, Object> petData = new HashMap<>();
+            petData.put("name", name);
+            petData.put("age", age);
+            petData.put("species", species);
+            petData.put("personality", personality);
+            petData.put("ownerId", ownerId);
+            petData.put("updatedAt", Timestamp.now());
+
+            if (currentPetId == null) {
+                currentPetId = dbHelper.newPetId();
+                petData.put("petId", currentPetId);
+                petData.put("createdAt", Timestamp.now());
+            }
+
+            setLoading(true);
+
+            if (selectedImageUri != null) {
+                uploadImageToCloudinaryThenSave(petData);
+            } else {
+                savePetData(petData);
+            }
+        });
     }
 
-    private void initViews() {
-        scrollPetForm = findViewById(R.id.scrollPetForm);
-        btnBack = findViewById(R.id.btnBack);
-        imgAvatarPreview = findViewById(R.id.imgAvatarPreview);
-
-        TextView tvFormTitle = findViewById(R.id.tvFormTitle);
-
-        if (currentPetId != null) {
-            tvFormTitle.setText("Chỉnh sửa thú cưng");
-        } else {
-            tvFormTitle.setText("Thêm thú cưng");
-        }
-
-        btnGallery = findViewById(R.id.btnGallery);
-        btnCamera = findViewById(R.id.btnCamera);
-        btnSave = findViewById(R.id.btnSave);
-
-        edtPetName = findViewById(R.id.edtPetName);
-        edtPetAge = findViewById(R.id.edtPetAge);
-        edtPetSpecies = findViewById(R.id.edtPetSpecies);
-        edtPetPersonality = findViewById(R.id.edtPetPersonality);
-    }
-
+    // Đăng ký launcher chọn ảnh từ thư viện và chụp ảnh (dùng cho listener của nút Gallery/Camera)
     private void initImageLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -132,6 +187,7 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
+    // Đăng ký launcher xin quyền camera (dùng cho listener của nút Camera)
     private void initPermissionLaunchers() {
         cameraPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -145,15 +201,7 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
-    private void openCameraWithPermissionCheck() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            openCamera();
-        } else {
-            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-    }
-
+    // Mở camera (được gọi cả từ nút Camera lẫn callback cấp quyền)
     private void openCamera() {
         cameraImageUri = createImageUri();
 
@@ -175,8 +223,9 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
+    // Tải dữ liệu thú cưng khi ở chế độ chỉnh sửa
     private void loadPetDataFromFirestore(String petId) {
-        db.collection("pets").document(petId).get()
+        dbHelper.getPet(petId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         edtPetName.setText(documentSnapshot.getString("name"));
@@ -208,63 +257,7 @@ public class PetFormActivity extends AppCompatActivity {
                 });
     }
 
-    private void savePetToFirestore() {
-        String name = edtPetName.getText().toString().trim();
-        String ageStr = edtPetAge.getText().toString().trim();
-        String species = edtPetSpecies.getText().toString().trim();
-        String personality = edtPetPersonality.getText().toString().trim();
-
-        if (name.isEmpty() || ageStr.isEmpty() || species.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập tên, tuổi và giống loài!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        int age;
-
-        try {
-            age = Integer.parseInt(ageStr);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Tuổi phải là số!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (age < 0) {
-            Toast.makeText(this, "Tuổi không hợp lệ!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser == null) {
-            Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String ownerId = currentUser.getUid();
-
-        Map<String, Object> petData = new HashMap<>();
-        petData.put("name", name);
-        petData.put("age", age);
-        petData.put("species", species);
-        petData.put("personality", personality);
-        petData.put("ownerId", ownerId);
-        petData.put("updatedAt", Timestamp.now());
-
-        if (currentPetId == null) {
-            currentPetId = db.collection("pets").document().getId();
-            petData.put("petId", currentPetId);
-            petData.put("createdAt", Timestamp.now());
-        }
-
-        setLoading(true);
-
-        if (selectedImageUri != null) {
-            uploadImageToCloudinaryThenSave(petData);
-        } else {
-            savePetData(petData);
-        }
-    }
-
+    // Upload ảnh lên Cloudinary rồi lưu dữ liệu thú cưng
     private void uploadImageToCloudinaryThenSave(Map<String, Object> petData) {
         MediaManager.get()
                 .upload(selectedImageUri)
@@ -308,9 +301,9 @@ public class PetFormActivity extends AppCompatActivity {
                 .dispatch();
     }
 
+    // Lưu dữ liệu thú cưng vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void savePetData(Map<String, Object> petData) {
-        db.collection("pets").document(currentPetId)
-                .set(petData, SetOptions.merge())
+        dbHelper.savePet(currentPetId, petData)
                 .addOnSuccessListener(aVoid -> {
                     setLoading(false);
                     Toast.makeText(this, "Lưu thông tin thành công!", Toast.LENGTH_SHORT).show();

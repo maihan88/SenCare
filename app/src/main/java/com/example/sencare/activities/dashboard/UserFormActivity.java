@@ -61,14 +61,46 @@ public class UserFormActivity extends AppCompatActivity {
 
         isEditMode = getIntent().getBooleanExtra("IS_EDIT_MODE", false);
 
-        initViews();
-        setupListeners();
+        ivAvatar = findViewById(R.id.ivAvatar);
+        etDisplayName = findViewById(R.id.etDisplayName);
+        btnChoosePhoto = findViewById(R.id.btnChoosePhoto);
+        btnTakePhoto = findViewById(R.id.btnTakePhoto);
+        btnSave = findViewById(R.id.btnSave);
+        btnClose = findViewById(R.id.btnClose);
+
+        btnChoosePhoto.setOnClickListener(v -> galleryLauncher.launch("image/*"));
+
+        btnTakePhoto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                launchCamera();
+            } else {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+        });
+
+        btnSave.setOnClickListener(v -> {
+            String displayName = etDisplayName.getText().toString().trim();
+            if (displayName.isEmpty()) {
+                etDisplayName.setError("Vui lòng nhập tên hiển thị");
+                return;
+            }
+
+            btnSave.setEnabled(false);
+            if (imageUri != null) {
+                uploadToCloudinary(displayName);
+            } else {
+                saveToFirestore(displayName, isEditMode ? null : DEFAULT_AVATAR);
+            }
+        });
+
+        btnClose.setOnClickListener(v -> finish());
 
         if (isEditMode) {
             loadUserData();
         }
     }
 
+    // Đăng ký launcher chọn ảnh, chụp ảnh và xin quyền camera (dùng cho listener của các nút ảnh)
     private void registerLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -102,22 +134,7 @@ public class UserFormActivity extends AppCompatActivity {
         );
     }
 
-    private void initViews() {
-        ivAvatar = findViewById(R.id.ivAvatar);
-        etDisplayName = findViewById(R.id.etDisplayName);
-        btnChoosePhoto = findViewById(R.id.btnChoosePhoto);
-        btnTakePhoto = findViewById(R.id.btnTakePhoto);
-        btnSave = findViewById(R.id.btnSave);
-        btnClose = findViewById(R.id.btnClose);
-    }
-
-    private void setupListeners() {
-        btnChoosePhoto.setOnClickListener(v -> openGallery());
-        btnTakePhoto.setOnClickListener(v -> openCamera());
-        btnSave.setOnClickListener(v -> validateAndSave());
-        btnClose.setOnClickListener(v -> finish());
-    }
-
+    // Tải dữ liệu người dùng khi ở chế độ chỉnh sửa
     private void loadUserData() {
         if (currentUid == null) return;
         dbHelper.getUser(currentUid).addOnSuccessListener(documentSnapshot -> {
@@ -133,18 +150,7 @@ public class UserFormActivity extends AppCompatActivity {
         });
     }
 
-    private void openGallery() {
-        galleryLauncher.launch("image/*");
-    }
-
-    private void openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            launchCamera();
-        } else {
-            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-    }
-
+    // Tạo file ảnh tạm rồi mở camera (gọi cả từ nút chụp ảnh lẫn callback cấp quyền)
     private void launchCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_" + System.currentTimeMillis() + ".jpg");
@@ -157,21 +163,7 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-    private void validateAndSave() {
-        String displayName = etDisplayName.getText().toString().trim();
-        if (displayName.isEmpty()) {
-            etDisplayName.setError("Vui lòng nhập tên hiển thị");
-            return;
-        }
-
-        btnSave.setEnabled(false);
-        if (imageUri != null) {
-            uploadToCloudinary(displayName);
-        } else {
-            saveToFirestore(displayName, isEditMode ? null : DEFAULT_AVATAR);
-        }
-    }
-
+    // Upload ảnh lên Cloudinary rồi lưu thông tin người dùng
     private void uploadToCloudinary(String displayName) {
         MediaManager.get().upload(imageUri).callback(new UploadCallback() {
             @Override
@@ -193,6 +185,7 @@ public class UserFormActivity extends AppCompatActivity {
         }).dispatch();
     }
 
+    // Lưu thông tin người dùng vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void saveToFirestore(String displayName, String avatarUrl) {
         if (currentUid == null) {
             btnSave.setEnabled(true);

@@ -11,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
+import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PetDetailActivity extends AppCompatActivity {
 
@@ -22,7 +22,7 @@ public class PetDetailActivity extends AppCompatActivity {
     private TextView tvDetailName, tvDetailSpecies, tvDetailAge, tvDetailPersonality;
     private MaterialButton btnEdit, btnDelete;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private String petId;
 
     @Override
@@ -30,7 +30,7 @@ public class PetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_detail);
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
 
         btnBack = findViewById(R.id.btnBack);
         imgDetailAvatar = findViewById(R.id.imgDetailAvatar);
@@ -57,7 +57,13 @@ public class PetDetailActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        btnDelete.setOnClickListener(v -> showDeleteConfirmDialog());
+        btnDelete.setOnClickListener(v ->
+                new AlertDialog.Builder(this)
+                        .setTitle("Xóa thú cưng")
+                        .setMessage("Bạn có chắc chắn muốn xóa thú cưng? Nếu CÓ thì sẽ mất dữ liệu!")
+                        .setPositiveButton("CÓ", (dialog, which) -> deletePet())
+                        .setNegativeButton("KHÔNG", (dialog, which) -> dialog.dismiss())
+                        .show());
     }
 
     @Override
@@ -69,7 +75,7 @@ public class PetDetailActivity extends AppCompatActivity {
     }
 
     private void loadPetDetail(String petId) {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseUtil.getAuth().getCurrentUser();
 
         if (currentUser == null) {
             Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
@@ -77,7 +83,7 @@ public class PetDetailActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("pets").document(petId).get()
+        dbHelper.getPet(petId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
                         Toast.makeText(this, "Không tìm thấy thú cưng!", Toast.LENGTH_SHORT).show();
@@ -120,23 +126,12 @@ public class PetDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void showDeleteConfirmDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Xóa thú cưng")
-                .setMessage("Bạn có chắc chắn muốn xóa thú cưng? Nếu CÓ thì sẽ mất dữ liệu!")
-                .setPositiveButton("CÓ", (dialog, which) -> deletePet())
-                .setNegativeButton("KHÔNG", (dialog, which) -> dialog.dismiss())
-                .show();
-    }
-
     private void deletePet() {
         if (petId == null) {
             return;
         }
 
-        db.collection("pets")
-                .document(petId)
-                .delete()
+        dbHelper.deletePet(petId)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Đã xóa thành công!", Toast.LENGTH_SHORT).show();
                     finish();

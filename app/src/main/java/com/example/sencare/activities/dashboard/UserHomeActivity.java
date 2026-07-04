@@ -14,7 +14,7 @@ import com.example.sencare.activities.diary.PetDiaryListActivity;
 import com.example.sencare.activities.pet.PetListActivity;
 import com.example.sencare.activities.profile.ProfileActivity;
 import com.example.sencare.activities.vet.VetMapActivity;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.sencare.utils.FirebaseUtil;
 
 public class UserHomeActivity extends AppCompatActivity {
 
@@ -38,7 +38,7 @@ public class UserHomeActivity extends AppCompatActivity {
 
         // Xử lý sự kiện đăng xuất
         btnLogout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
+            FirebaseUtil.getAuth().signOut();
             Intent intent = new Intent(UserHomeActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

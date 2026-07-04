@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
     private ImageView btnBack, imgDiaryDetail;
     private TextView tvDiaryDate, tvDiaryCaption;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private String diaryId;
 
     @Override
@@ -30,7 +30,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_detail);
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
 
         btnBack = findViewById(R.id.btnBack);
         imgDiaryDetail = findViewById(R.id.imgDiaryDetail);
@@ -51,9 +51,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
     }
 
     private void loadDiaryDetail() {
-        db.collection("diaries")
-                .document(diaryId)
-                .get()
+        dbHelper.getDiary(diaryId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
                         Toast.makeText(this, "Nhật ký không tồn tại!", Toast.LENGTH_SHORT).show();

@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sencare.R;
 import com.example.sencare.adapters.PetAdapter;
 import com.example.sencare.models.Pet;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,7 +47,7 @@ public class PetListActivity extends AppCompatActivity {
     private com.google.android.material.button.MaterialButton btnAddPet;
 
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private ListenerRegistration petListener;
 
 
@@ -73,7 +73,7 @@ public class PetListActivity extends AppCompatActivity {
         rvPetList.setAdapter(petAdapter);
 
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
     }
 
 
@@ -95,7 +95,7 @@ public class PetListActivity extends AppCompatActivity {
 
 
     private void loadPetsFromFirestore() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseUtil.getAuth().getCurrentUser();
 
 
         if (currentUser == null) {
@@ -107,8 +107,7 @@ public class PetListActivity extends AppCompatActivity {
         String uid = currentUser.getUid();
 
 
-        petListener = db.collection("pets")
-                .whereEqualTo("ownerId", uid)
+        petListener = dbHelper.getPetsByOwner(uid)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((@Nullable QuerySnapshot value,
                                       @Nullable FirebaseFirestoreException error) -> {

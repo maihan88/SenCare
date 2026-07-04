@@ -6,9 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
-    app:cardBackgroundColor="#7EEFF0"
+    app:cardBackgroundColor="@color/mint_pale"
     app:cardCornerRadius="16dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:strokeColor="@color/mint"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +22,7 @@
             android:id="@+id/tvTimelineDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"

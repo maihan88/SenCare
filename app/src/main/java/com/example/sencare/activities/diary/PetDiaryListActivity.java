@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sencare.R;
 import com.example.sencare.adapters.PetDiaryAdapter;
 import com.example.sencare.models.Pet;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -30,7 +30,7 @@ public class PetDiaryListActivity extends AppCompatActivity {
     private List<Pet> petList;
     private ImageView btnBack;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private ListenerRegistration petListener;
 
     @Override
@@ -47,12 +47,12 @@ public class PetDiaryListActivity extends AppCompatActivity {
         adapter = new PetDiaryAdapter(petList);
         rvDiaryList.setAdapter(adapter);
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
         loadPetsForDiary();
     }
 
     private void loadPetsForDiary() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseUtil.getAuth().getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, "Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show();
             return;
@@ -60,8 +60,7 @@ public class PetDiaryListActivity extends AppCompatActivity {
 
         String uid = currentUser.getUid();
 
-        petListener = db.collection("pets")
-                .whereEqualTo("ownerId", uid)
+        petListener = dbHelper.getPetsByOwner(uid)
                 .addSnapshotListener((@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) -> {
                     if (error != null) {
                         Log.e("Firestore", "Lỗi kéo data: ", error);

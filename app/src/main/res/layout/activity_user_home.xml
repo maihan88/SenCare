@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background"
+    android:background="@drawable/bg_app"
     android:padding="16dp"
     tools:context=".activities.dashboard.UserHomeActivity">
 
@@ -14,27 +14,29 @@
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="4dp"
         android:background="@drawable/bg_exit"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="8dp"
-        android:text="Đăng xuất"
-        android:textColor="@android:color/white"
+        android:paddingHorizontal="22dp"
+        android:paddingVertical="9dp"
+        android:text="@string/action_logout"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/ivLogo"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="92dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
     <LinearLayout
         android:id="@+id/bannerLayout"
         android:layout_width="match_parent"
         android:layout_height="180dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -49,72 +51,73 @@
     <LinearLayout
         android:id="@+id/layoutMenu"
         android:layout_width="match_parent"
-        android:layout_height="287dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_weight="1"
         android:background="@drawable/bg_menu2"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <!-- Hàng 1 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <LinearLayout
                 android:id="@+id/layoutPet"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_edittext"
+                android:background="@drawable/bg_tile_mint"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivPet"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:src="@drawable/iconpet" />
 
                 <TextView
                     android:id="@+id/tvPet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Thú cưng"
-                    android:textColor="#555555" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/menu_pet"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutDiary"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_edittext"
+                android:background="@drawable/bg_tile_yellow"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivDiary"
-                    android:layout_width="65dp"
-                    android:layout_height="64dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:src="@drawable/icondiary" />
 
                 <TextView
                     android:id="@+id/tvDiary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Nhật ký"
-                    android:textColor="#555555" />
+                    android:layout_marginTop="8dp"
+                    android:text="@string/menu_diary"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -122,26 +125,25 @@
         <!-- Hàng 2 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <LinearLayout
                 android:id="@+id/layoutVet"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_edittext"
+                android:background="@drawable/bg_tile_coral"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivVet"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:src="@drawable/iconvet" />
 
                 <TextView
@@ -149,25 +151,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Trạm thú y"
-                    android:textColor="#555555" />
+                    android:text="@string/menu_vet"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutSpa"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_edittext"
+                android:background="@drawable/bg_tile_sky"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/ivSpa"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:src="@drawable/iconpetspa" />
 
                 <TextView
@@ -175,8 +177,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Đặt lịch spa"
-                    android:textColor="#555555" />
+                    android:text="@string/menu_spa"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -187,14 +190,14 @@
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="72dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/layoutHome"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
+            android:layout_width="120dp"
+            android:layout_height="58dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
@@ -202,39 +205,43 @@
 
             <ImageView
                 android:id="@+id/ivHome"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:src="@drawable/iconhome" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/home" />
 
             <TextView
                 android:id="@+id/tvHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trang chủ"
-                android:textSize="10sp" />
+                android:text="@string/nav_home"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutProfile"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="50dp"
+            android:layout_width="120dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="16dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/ivProfile"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:src="@drawable/iconman" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/user" />
 
             <TextView
                 android:id="@+id/tvProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cá nhân"
-                android:textSize="10sp" />
+                android:text="@string/nav_profile"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:textSize="11sp" />
         </LinearLayout>
 
     </LinearLayout>

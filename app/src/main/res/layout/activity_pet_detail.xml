@@ -6,37 +6,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background"
+    android:background="@drawable/bg_app"
     tools:context=".activities.pet.PetDetailActivity">
-    <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:padding="8dp"
-        android:src="@drawable/backbutton" />
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Hồ sơ thú cưng"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-</RelativeLayout>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_back_circle"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="@string/action_back"
+            app:tint="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Hồ sơ thú cưng"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="44dp"
+            android:layout_height="44dp" />
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp">
@@ -48,20 +58,29 @@
             android:padding="24dp"
             android:gravity="center_horizontal">
 
-            <ImageView
-                android:id="@+id/imgDetailAvatar"
+            <androidx.cardview.widget.CardView
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:layout_marginTop="20dp"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:cardCornerRadius="80dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/mint"
+                app:strokeWidth="3dp">
+
+                <ImageView
+                    android:id="@+id/imgDetailAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/tvDetailName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 tools:text="Lu Lu" />
@@ -70,8 +89,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:background="#F5F5F5"
-                android:padding="16dp"
+                android:background="@drawable/bg_card_mint"
+                android:padding="18dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -79,7 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
                     tools:text="Giống loài: Chó Corgi" />
 
                 <TextView
@@ -88,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
                     tools:text="Tuổi: 2" />
 
                 <TextView
@@ -97,14 +116,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
                     tools:text="Tính cách: Năng động, hay làm nũng" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,29 +134,25 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEdit"
+                    style="@style/Widget.SenCare.Button.Accent"
                     android:layout_width="0dp"
                     android:layout_height="55dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="Chỉnh sửa"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    app:backgroundTint="#FFD180"
-                    app:cornerRadius="16dp"/>
+                    app:cornerRadius="16dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDelete"
+                    style="@style/Widget.SenCare.Button.Coral"
                     android:layout_width="0dp"
                     android:layout_height="55dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
                     android:text="Xóa"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    app:backgroundTint="#FF5252"
-                    app:cornerRadius="16dp"/>
+                    app:cornerRadius="16dp" />
             </LinearLayout>
 
         </LinearLayout>

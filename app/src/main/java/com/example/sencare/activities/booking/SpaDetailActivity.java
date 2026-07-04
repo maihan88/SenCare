@@ -13,10 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
 import com.example.sencare.models.Spa;
-import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 public class SpaDetailActivity extends AppCompatActivity {
 
@@ -26,6 +25,7 @@ public class SpaDetailActivity extends AppCompatActivity {
     private ChipGroup cgServices;
     private Button btnBookNow;
 
+    private FirestoreHelper dbHelper;
     private String spaId;
     private double distance;
     private Spa mSpa;
@@ -35,15 +35,11 @@ public class SpaDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spa_detail);
 
+        dbHelper = new FirestoreHelper();
+
         spaId = getIntent().getStringExtra("SPA_ID");
         distance = getIntent().getDoubleExtra("DISTANCE", 0);
 
-        initViews();
-        setupListeners();
-        fetchSpaDetail();
-    }
-
-    private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         imgSpa = findViewById(R.id.imgSpa);
         tvSpaName = findViewById(R.id.tvSpaName);
@@ -54,10 +50,9 @@ public class SpaDetailActivity extends AppCompatActivity {
         tvSpaDescription = findViewById(R.id.tvSpaDescription);
         cgServices = findViewById(R.id.cgServices);
         btnBookNow = findViewById(R.id.btnBookNow);
-    }
 
-    private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
+
         btnBookNow.setOnClickListener(v -> {
             if (mSpa != null) {
                 Intent intent = new Intent(this, BookingFormActivity.class);
@@ -67,12 +62,15 @@ public class SpaDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        fetchSpaDetail();
     }
 
+    // Tải thông tin chi tiết spa rồi hiển thị lên giao diện
     private void fetchSpaDetail() {
         if (spaId == null) return;
 
-        FirebaseUtil.getFirestore().collection("spas").document(spaId).get()
+        dbHelper.getSpa(spaId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         mSpa = documentSnapshot.toObject(Spa.class);

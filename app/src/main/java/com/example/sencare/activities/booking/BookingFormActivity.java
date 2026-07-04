@@ -21,8 +21,8 @@ import com.example.sencare.models.Booking;
 import com.example.sencare.models.Pet;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class BookingFormActivity extends AppCompatActivity {
     private RecyclerView rvPets, rvServices;
     private Button btnConfirm;
 
+    private FirestoreHelper dbHelper;
     private String spaId, spaName, spaImage;
     private PetSelectAdapter petAdapter;
     private ServiceSelectAdapter serviceAdapter;
@@ -51,17 +52,12 @@ public class BookingFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_form);
 
+        dbHelper = new FirestoreHelper();
+
         spaId = getIntent().getStringExtra("SPA_ID");
         spaName = getIntent().getStringExtra("SPA_NAME");
         spaImage = getIntent().getStringExtra("SPA_IMAGE");
 
-        initViews();
-        setupListeners();
-        fetchUserData();
-        fetchSpaServices();
-    }
-
-    private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         imgSpa = findViewById(R.id.imgSpa);
         tvSpaName = findViewById(R.id.tvSpaName);
@@ -81,48 +77,91 @@ public class BookingFormActivity extends AppCompatActivity {
 
         serviceAdapter = new ServiceSelectAdapter(serviceList);
         rvServices.setAdapter(serviceAdapter);
-    }
 
-    private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
-        tvDate.setOnClickListener(v -> showDatePicker());
-        tvTime.setOnClickListener(v -> showTimePicker());
+        tvDate.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+                bookingCalendar.set(Calendar.YEAR, year);
+                bookingCalendar.set(Calendar.MONTH, month);
+                bookingCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                tvDate.setText(String.format("%02d/%02d/%d", month + 1, dayOfMonth, year));
+            }, bookingCalendar.get(Calendar.YEAR), bookingCalendar.get(Calendar.MONTH), bookingCalendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            datePickerDialog.show();
+        });
 
-        btnConfirm.setOnClickListener(v -> submitBooking());
+        tvTime.setOnClickListener(v -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+                bookingCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                bookingCalendar.set(Calendar.MINUTE, minute);
+                bookingCalendar.set(Calendar.SECOND, 0);
+
+                String amPm = hourOfDay < 12 ? "AM" : "PM";
+                int hour = hourOfDay % 12;
+                if (hour == 0) hour = 12;
+                tvTime.setText(String.format("%02d:%02d %s", hour, minute, amPm));
+            }, bookingCalendar.get(Calendar.HOUR_OF_DAY), bookingCalendar.get(Calendar.MINUTE), false);
+            timePickerDialog.show();
+        });
+
+        btnConfirm.setOnClickListener(v -> {
+            Pet selectedPet = petAdapter.getSelectedPet();
+            String selectedService = serviceAdapter.getSelectedService();
+            String date = tvDate.getText().toString();
+            String time = tvTime.getText().toString();
+
+            if (selectedPet == null) {
+                Toast.makeText(this, "Vui lòng chọn thú cưng", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedService == null) {
+                Toast.makeText(this, "Vui lòng chọn dịch vụ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (date.isEmpty() || time.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn ngày và giờ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String userId = FirebaseUtil.getCurrentUserId();
+            if (userId == null) return;
+
+            Booking booking = new Booking();
+            booking.setUserId(userId);
+            booking.setPetId(selectedPet.getPetId());
+            booking.setPetName(selectedPet.getName());
+            booking.setSpaId(spaId);
+            booking.setSpaName(spaName);
+            booking.setServiceName(selectedService);
+            booking.setBookingDate(date);
+            booking.setBookingTime(time);
+            booking.setBookingTimestamp(new Timestamp(bookingCalendar.getTime()));
+            booking.setStatus("active");
+            booking.setCreatedAt(Timestamp.now());
+            booking.setUpdatedAt(Timestamp.now());
+
+            dbHelper.addBooking(booking)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, BookingListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Đặt lịch thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+
+        fetchUserData();
+        fetchSpaServices();
     }
 
-    private void showDatePicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            bookingCalendar.set(Calendar.YEAR, year);
-            bookingCalendar.set(Calendar.MONTH, month);
-            bookingCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            tvDate.setText(String.format("%02d/%02d/%d", month + 1, dayOfMonth, year));
-        }, bookingCalendar.get(Calendar.YEAR), bookingCalendar.get(Calendar.MONTH), bookingCalendar.get(Calendar.DAY_OF_MONTH));
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        datePickerDialog.show();
-    }
-
-    private void showTimePicker() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
-            bookingCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            bookingCalendar.set(Calendar.MINUTE, minute);
-            bookingCalendar.set(Calendar.SECOND, 0);
-            
-            String amPm = hourOfDay < 12 ? "AM" : "PM";
-            int hour = hourOfDay % 12;
-            if (hour == 0) hour = 12;
-            tvTime.setText(String.format("%02d:%02d %s", hour, minute, amPm));
-        }, bookingCalendar.get(Calendar.HOUR_OF_DAY), bookingCalendar.get(Calendar.MINUTE), false);
-        timePickerDialog.show();
-    }
-
+    // Tải danh sách thú cưng của người dùng để chọn khi đặt lịch
     private void fetchUserData() {
         String userId = FirebaseUtil.getCurrentUserId();
         if (userId == null) return;
 
-        FirebaseUtil.getFirestore().collection("pets")
-                .whereEqualTo("ownerId", userId)
+        dbHelper.getPetsByOwner(userId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     petList.clear();
@@ -135,10 +174,11 @@ public class BookingFormActivity extends AppCompatActivity {
                 });
     }
 
+    // Tải danh sách dịch vụ của spa để chọn khi đặt lịch
     private void fetchSpaServices() {
         if (spaId == null) return;
 
-        FirebaseUtil.getFirestore().collection("spas").document(spaId).get()
+        dbHelper.getSpa(spaId)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Spa spa = documentSnapshot.toObject(Spa.class);
@@ -149,53 +189,5 @@ public class BookingFormActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private void submitBooking() {
-        Pet selectedPet = petAdapter.getSelectedPet();
-        String selectedService = serviceAdapter.getSelectedService();
-        String date = tvDate.getText().toString();
-        String time = tvTime.getText().toString();
-
-        if (selectedPet == null) {
-            Toast.makeText(this, "Vui lòng chọn thú cưng", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (selectedService == null) {
-            Toast.makeText(this, "Vui lòng chọn dịch vụ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (date.isEmpty() || time.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn ngày và giờ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String userId = FirebaseUtil.getCurrentUserId();
-        if (userId == null) return;
-
-        Booking booking = new Booking();
-        booking.setUserId(userId);
-        booking.setPetId(selectedPet.getPetId());
-        booking.setPetName(selectedPet.getName());
-        booking.setSpaId(spaId);
-        booking.setSpaName(spaName);
-        booking.setServiceName(selectedService);
-        booking.setBookingDate(date);
-        booking.setBookingTime(time);
-        booking.setBookingTimestamp(new Timestamp(bookingCalendar.getTime()));
-        booking.setStatus("active");
-        booking.setCreatedAt(Timestamp.now());
-        booking.setUpdatedAt(Timestamp.now());
-
-        FirebaseUtil.getFirestore().collection("bookings")
-                .add(booking)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, BookingListActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Đặt lịch thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

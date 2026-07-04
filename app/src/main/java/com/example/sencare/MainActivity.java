@@ -14,8 +14,8 @@ import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MaterialButton btnLogin, btnRegister;
-    private TextView tvForgotPassword;
+    private MaterialButton btnLogin, btnRegister, btnClose;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
+        btnClose = findViewById(R.id.btnClose);
 
         btnLogin.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         btnRegister.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, RegisterActivity.class)));
+        btnClose.setOnClickListener(v-> finish());
     }
 }

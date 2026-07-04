@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sencare.R;
 import com.example.sencare.adapters.TimelineDateAdapter;
 import com.example.sencare.models.Diary;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,7 +36,7 @@ public class DiaryTimelineActivity extends AppCompatActivity {
     private TextView tvDiaryTitle;
     private RecyclerView rvDiaryList;
 
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private ListenerRegistration diaryListener;
     private String petId, petName;
     private TimelineDateAdapter adapter;
@@ -52,7 +52,7 @@ public class DiaryTimelineActivity extends AppCompatActivity {
         tvDiaryTitle = findViewById(R.id.tvDiaryTitle);
         rvDiaryList = findViewById(R.id.rvDiaryList);
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
 
         petId = getIntent().getStringExtra("petId");
         petName = getIntent().getStringExtra("petName");
@@ -101,8 +101,7 @@ public class DiaryTimelineActivity extends AppCompatActivity {
         if (diaryListener != null) {
             diaryListener.remove();
         }
-        diaryListener = db.collection("diaries")
-                .whereEqualTo("petId", petId)
+        diaryListener = dbHelper.getDiariesByPet(petId)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) -> {
                     if (error != null) {

@@ -19,7 +19,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.sencare.R;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.DijkstraUtil;
-import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,7 +30,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
+    private FirestoreHelper dbHelper;
     private double initialRadius;
     private LatLng userLatLng;
 
@@ -62,21 +62,9 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spa_map);
 
+        dbHelper = new FirestoreHelper();
         initialRadius = getIntent().getDoubleExtra("RADIUS", 5.0);
 
-        initViews();
-        setupListeners();
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-    }
-
-    private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         tvRadiusInfo = findViewById(R.id.tvRadiusInfo);
         tvSpaCount = findViewById(R.id.tvSpaCount);
@@ -86,9 +74,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         tvDistance = findViewById(R.id.tvDistance);
         btnViewDetail = findViewById(R.id.btnViewDetail);
         btnBookNow = findViewById(R.id.btnBookNow);
-    }
 
-    private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
         btnViewDetail.setOnClickListener(v -> {
@@ -109,6 +95,14 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 startActivity(intent);
             }
         });
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     @Override
@@ -137,6 +131,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
+    // Lấy vị trí hiện tại rồi tải danh sách spa (gọi cả từ khi kiểm tra quyền lẫn callback cấp quyền)
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             return;
@@ -152,8 +147,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void fetchSpas() {
-        FirebaseFirestore db = FirebaseUtil.getFirestore();
-        db.collection("spas").get().addOnCompleteListener(task -> {
+        dbHelper.getAllSpas().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 allSpas.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -166,6 +160,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
+    // Lọc spa trong bán kính bằng Dijkstra rồi vẽ marker lên bản đồ
     private void processSpas() {
         if (userLatLng == null || allSpas.isEmpty()) return;
 
@@ -194,7 +189,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(spaLatLng)
                     .title(node.spa.getSpaName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
             markerMap.put(marker, node);
         }
 

@@ -1,24 +1,21 @@
 package com.example.sencare.activities.vet;
 
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-
 import com.example.sencare.R;
 import com.example.sencare.databinding.ActivityVetMapBinding;
 import com.example.sencare.models.VetClinic;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,16 +27,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 
 public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ActivityVetMapBinding binding;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
-    private FirebaseFirestore db;
+    private FirestoreHelper dbHelper;
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private VetClinic selectedClinic;
 
@@ -51,27 +46,18 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
         binding = ActivityVetMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        db = FirebaseFirestore.getInstance();
+        dbHelper = new FirestoreHelper();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        setupMap();
-        setupBottomSheet();
-        setupListeners();
-    }
-
-    private void setupMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-    }
-    private void setupBottomSheet() {
+
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetClinic);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    }
 
-    private void setupListeners() {
         binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnCall.setOnClickListener(v -> {
@@ -145,9 +131,7 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void fetchVetClinics() {
-        db.collection("vetClinics")
-                .whereEqualTo("active", true)
-                .get()
+        dbHelper.getActiveVetClinics()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     mMap.clear(); // Xóa marker cũ nếu có
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -161,6 +145,7 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 });
     }
 
+    // Vẽ marker cho một phòng khám (gọi lặp cho từng phòng khám lấy được)
     private void addMarkerForClinic(VetClinic clinic) {
         LatLng latLng = new LatLng(clinic.getLatitude(), clinic.getLongitude());
         Marker marker = mMap.addMarker(new MarkerOptions()
@@ -172,14 +157,12 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-
     private void showClinicDetails(VetClinic clinic) {
         binding.tvClinicName.setText(clinic.getName());
         binding.tvClinicAddress.setText(clinic.getAddress());
         binding.tvClinicPhone.setText("SĐT: " + clinic.getPhone());
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

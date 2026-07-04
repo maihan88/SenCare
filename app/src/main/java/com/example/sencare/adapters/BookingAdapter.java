@@ -41,8 +41,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         Booking booking = bookingList.get(position);
         holder.tvSpaName.setText(booking.getSpaName());
-        holder.tvPetService.setText(String.format("🐾 %s - %s", booking.getPetName(), booking.getServiceName()));
-        holder.tvDateTime.setText(String.format("📅 %s - 🕒 %s", booking.getBookingDate(), booking.getBookingTime()));
+        holder.tvPetService.setText(String.format("%s - %s", booking.getPetName(), booking.getServiceName()));
+        holder.tvDate.setText(booking.getBookingDate());
+        holder.tvTime.setText(booking.getBookingTime());
 
         if (isPast) {
             holder.tvStatus.setText("Đã qua");
@@ -63,7 +64,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSpaName, tvStatus, tvPetService, tvDateTime;
+        TextView tvSpaName, tvStatus, tvPetService, tvDate, tvTime;
         Button btnCancel;
 
         public BookingViewHolder(@NonNull View itemView) {
@@ -71,7 +72,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             tvSpaName = itemView.findViewById(R.id.tvSpaName);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvPetService = itemView.findViewById(R.id.tvPetService);
-            tvDateTime = itemView.findViewById(R.id.tvDateTime);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvTime = itemView.findViewById(R.id.tvTime);
             btnCancel = itemView.findViewById(R.id.btnCancel);
         }
     }

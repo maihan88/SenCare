@@ -12,8 +12,8 @@ import com.example.sencare.R;
 import com.example.sencare.adapters.BookingAdapter;
 import com.example.sencare.models.Booking;
 import com.example.sencare.utils.FirebaseUtil;
+import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -27,51 +27,47 @@ public class BookingListActivity extends AppCompatActivity {
     private List<Booking> upcomingList = new ArrayList<>();
     private List<Booking> pastList = new ArrayList<>();
     private BookingAdapter upcomingAdapter, pastAdapter;
+    private FirestoreHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_list);
 
-        initViews();
-        setupListeners();
-        fetchBookings();
-    }
+        dbHelper = new FirestoreHelper();
 
-    private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         rvUpcoming = findViewById(R.id.rvUpcoming);
         rvPast = findViewById(R.id.rvPast);
 
-        upcomingAdapter = new BookingAdapter(upcomingList, false, this::showCancelDialog);
+        upcomingAdapter = new BookingAdapter(upcomingList, false, booking -> showCancelDialog(booking));
         rvUpcoming.setAdapter(upcomingAdapter);
 
         pastAdapter = new BookingAdapter(pastList, true, booking -> {});
         rvPast.setAdapter(pastAdapter);
-    }
 
-    private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
+
+        fetchBookings();
     }
 
+    // Tải danh sách lịch hẹn của người dùng, chia thành sắp tới / đã qua (gọi lại sau khi hủy lịch)
     private void fetchBookings() {
         String userId = FirebaseUtil.getCurrentUserId();
         if (userId == null) return;
 
         // Fetch all bookings for the user and filter in memory to avoid index requirements
-        FirebaseUtil.getFirestore().collection("bookings")
-                .whereEqualTo("userId", userId)
-                .get()
+        dbHelper.getBookingsByUser(userId)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     upcomingList.clear();
                     pastList.clear();
                     Date now = new Date();
-                    
+
                     List<Booking> allUserBookings = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Booking booking = doc.toObject(Booking.class);
                         booking.setBookingId(doc.getId());
-                        
+
                         // Filter by status "active"
                         if ("active".equals(booking.getStatus())) {
                             allUserBookings.add(booking);
@@ -85,7 +81,7 @@ public class BookingListActivity extends AppCompatActivity {
                     });
 
                     for (Booking booking : allUserBookings) {
-                        if (booking.getBookingTimestamp() != null && 
+                        if (booking.getBookingTimestamp() != null &&
                             booking.getBookingTimestamp().toDate().before(now)) {
                             pastList.add(booking);
                         } else {
@@ -98,7 +94,7 @@ public class BookingListActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Lỗi khi tải lịch hẹn: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-
+    // Hộp thoại xác nhận hủy lịch (được adapter gọi khi bấm nút hủy trên từng lịch hẹn)
     private void showCancelDialog(Booking booking) {
         new AlertDialog.Builder(this)
                 .setTitle("Hủy lịch")
@@ -109,8 +105,7 @@ public class BookingListActivity extends AppCompatActivity {
     }
 
     private void cancelBooking(Booking booking) {
-        FirebaseUtil.getFirestore().collection("bookings").document(booking.getBookingId())
-                .update("status", "cancelled", "updatedAt", Timestamp.now())
+        dbHelper.updateBookingStatus(booking.getBookingId(), "cancelled", Timestamp.now())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
                     fetchBookings(); // Refresh list

@@ -6,8 +6,10 @@
     android:layout_width="90dp"
     android:layout_height="110dp"
     android:layout_margin="4dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/mint_light"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:id="@+id/llPetContainer"
@@ -34,7 +36,7 @@
                 android:id="@+id/tvPetInitial"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/text_blue"
+                android:background="@color/mint"
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="20sp"

@@ -1,4 +1,4 @@
-package com.example.sencare.activities.spaowner;
+package com.example.sencare.activities.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
+import com.example.sencare.activities.form.SpaFormActivity;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.button.MaterialButton;

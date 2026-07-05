@@ -31,7 +31,7 @@
             android:name=".activities.map.MapPickerActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.dashboard.UserFormActivity"
+            android:name=".activities.form.UserFormActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -70,10 +70,10 @@
             android:name=".activities.booking.SpaSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.spaowner.SpaProfileActivity"
+            android:name=".activities.profile.SpaProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.spaowner.SpaFormActivity"
+            android:name=".activities.form.SpaFormActivity"
             android:exported="false" />
         <activity
             android:name=".activities.diary.DiaryDetailActivity"
@@ -97,10 +97,10 @@
             android:name=".activities.pet.PetListActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.dashboard.SpaOwnerHomeActivity"
+            android:name=".activities.home.SpaOwnerHomeActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.dashboard.UserHomeActivity"
+            android:name=".activities.home.UserHomeActivity"
             android:exported="false" />
         <activity
             android:name=".activities.profile.ProfileActivity"

@@ -8,7 +8,7 @@
     android:background="@drawable/bg_app"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context=".activities.dashboard.UserFormActivity">
+    tools:context=".activities.form.UserFormActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

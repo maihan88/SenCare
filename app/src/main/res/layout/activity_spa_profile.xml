@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:background="@drawable/bg_app"
     android:fitsSystemWindows="true"
-    tools:context=".activities.spaowner.SpaProfileActivity">
+    tools:context=".activities.profile.SpaProfileActivity">
 
     <ImageButton
         android:id="@+id/btnBack"

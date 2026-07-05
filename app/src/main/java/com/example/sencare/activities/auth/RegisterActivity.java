@@ -9,8 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sencare.R;
-import com.example.sencare.activities.dashboard.UserFormActivity;
-import com.example.sencare.activities.spaowner.SpaFormActivity;
+import com.example.sencare.activities.form.UserFormActivity;
+import com.example.sencare.activities.form.SpaFormActivity;
 import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;

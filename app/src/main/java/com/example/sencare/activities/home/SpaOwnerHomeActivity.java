@@ -1,4 +1,4 @@
-package com.example.sencare.activities.dashboard;
+package com.example.sencare.activities.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.sencare.MainActivity;
 import com.example.sencare.R;
 import com.example.sencare.activities.auth.LoginActivity;
-import com.example.sencare.activities.spaowner.SpaProfileActivity;
+import com.example.sencare.activities.profile.SpaProfileActivity;
 import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;

@@ -68,6 +68,11 @@ public class FirestoreHelper {
         return db.collection(COLLECTION_SPAS).get();
     }
 
+    // Truy vấn tất cả spa (dùng cho addSnapshotListener() realtime)
+    public Query getSpasQuery() {
+        return db.collection(COLLECTION_SPAS);
+    }
+
     // Tạo id mới cho thú cưng
     public String newPetId() {
         return db.collection(COLLECTION_PETS).document().getId();

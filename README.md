@@ -434,11 +434,11 @@ com.example.sencare
 | Package                | Ý nghĩa                                        |
 | ---------------------- | ---------------------------------------------- |
 | `activities.auth`      | Các màn hình đăng nhập, đăng ký, quên mật khẩu |
-| `activities.profile`   | Màn hình hồ sơ người dùng                      |
-| `activities.dashboard` | Màn hình chính của user và spa owner           |
+| `activities.profile`   | Màn hình hồ sơ của user và spa                 |
+| `activities.home`      | Màn hình chính của user và spa owner           |
+| `activities.form`      | Màn hình nhập/sửa thông tin của user và spa    |
 | `activities.pet`       | Quản lý thú cưng                               |
 | `activities.diary`     | Nhật ký khoảnh khắc của thú cưng               |
-| `activities.spaowner`  | Chủ spa thêm/sửa hồ sơ spa                     |
 | `activities.booking`   | Người dùng tìm spa và đặt lịch                 |
 | `activities.vet`       | Bản đồ trạm thú y                              |
 | `adapters`             | Adapter cho RecyclerView                       |

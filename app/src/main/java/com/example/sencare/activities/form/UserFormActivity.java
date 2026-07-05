@@ -1,4 +1,4 @@
-package com.example.sencare.activities.dashboard;
+package com.example.sencare.activities.form;
 
 import android.Manifest;
 import android.content.ContentValues;

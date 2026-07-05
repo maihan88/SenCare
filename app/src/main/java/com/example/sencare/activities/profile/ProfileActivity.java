@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
-import com.example.sencare.activities.dashboard.UserFormActivity;
-import com.example.sencare.activities.dashboard.UserHomeActivity;
+import com.example.sencare.activities.form.UserFormActivity;
+import com.example.sencare.activities.home.UserHomeActivity;
 import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;

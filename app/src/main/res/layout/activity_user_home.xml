@@ -9,7 +9,7 @@
     android:background="@drawable/bg_app"
     android:padding="16dp"
     android:fitsSystemWindows="true"
-    tools:context=".activities.dashboard.UserHomeActivity">
+    tools:context=".activities.home.UserHomeActivity">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/btnLogout"

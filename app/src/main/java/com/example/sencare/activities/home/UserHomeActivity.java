@@ -1,4 +1,4 @@
-package com.example.sencare.activities.dashboard;
+package com.example.sencare.activities.home;
 
 import android.content.Intent;
 import android.os.Bundle;

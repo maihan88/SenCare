@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private FirestoreHelper dbHelper;
+    private ListenerRegistration spaListener;
     private double initialRadius;
     private LatLng userLatLng;
 
@@ -146,18 +148,22 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
+    // Lắng nghe realtime: có spa mới/đổi thông tin là bản đồ tự cập nhật ngay
     private void fetchSpas() {
-        dbHelper.getAllSpas().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                allSpas.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Spa spa = document.toObject(Spa.class);
-                    spa.setSpaId(document.getId());
-                    allSpas.add(spa);
-                }
-                processSpas();
-            }
-        });
+        if (spaListener != null) return; // đã đăng ký rồi thì thôi
+
+        spaListener = dbHelper.getSpasQuery()
+                .addSnapshotListener((value, error) -> {
+                    if (error != null || value == null) return;
+
+                    allSpas.clear();
+                    for (QueryDocumentSnapshot document : value) {
+                        Spa spa = document.toObject(Spa.class);
+                        spa.setSpaId(document.getId());
+                        allSpas.add(spa);
+                    }
+                    processSpas();
+                });
     }
 
     // Lọc spa trong bán kính bằng Dijkstra rồi vẽ marker lên bản đồ
@@ -209,5 +215,15 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         tvSpaAddress.setText(node.spa.getAddress());
         tvDistance.setText(String.format("%.1f km", node.distance));
         cvSpaInfo.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Gỡ listener realtime khi đóng màn hình để tránh rò rỉ bộ nhớ
+        if (spaListener != null) {
+            spaListener.remove();
+            spaListener = null;
+        }
     }
 }

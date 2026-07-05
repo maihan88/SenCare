@@ -1,4 +1,4 @@
-package com.example.sencare.activities.spaowner;
+package com.example.sencare.activities.form;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -23,7 +23,7 @@ import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.example.sencare.R;
-import com.example.sencare.activities.dashboard.SpaOwnerHomeActivity;
+import com.example.sencare.activities.home.SpaOwnerHomeActivity;
 import com.example.sencare.activities.map.MapPickerActivity;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.CloudinaryUtil;

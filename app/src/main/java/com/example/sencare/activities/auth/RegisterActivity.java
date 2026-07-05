@@ -40,10 +40,10 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnLogin);
 
         btnRegister.setOnClickListener(v -> {
-            String username = getText(edtUsername);
-            String email = getText(edtEmail);
-            String password = getText(edtPassword);
-            String confirm = getText(edtConfirmPassword);
+            String username = edtUsername.getText() != null ? edtUsername.getText().toString().trim() : "";
+            String email = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
+            String password = edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
+            String confirm = edtConfirmPassword.getText() != null ? edtConfirmPassword.getText().toString().trim() : "";
 
             if (username.isEmpty()) {
                 edtUsername.setError("Nhập tên đăng nhập");
@@ -109,10 +109,5 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Lỗi lưu dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     if (mAuth.getCurrentUser() != null) mAuth.getCurrentUser().delete();
                 });
-    }
-
-    // Lấy text đã trim từ EditText (dùng lại cho nhiều ô nhập)
-    private String getText(EditText editText) {
-        return editText.getText() != null ? editText.getText().toString().trim() : "";
     }
 }

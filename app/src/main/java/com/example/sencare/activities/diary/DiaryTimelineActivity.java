@@ -20,10 +20,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -102,7 +102,6 @@ public class DiaryTimelineActivity extends AppCompatActivity {
             diaryListener.remove();
         }
         diaryListener = dbHelper.getDiariesByPet(petId)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) -> {
                     if (error != null) {
                         Log.e("DiaryTimeline", "Lỗi kéo data: ", error);
@@ -110,13 +109,25 @@ public class DiaryTimelineActivity extends AppCompatActivity {
                     }
 
                     if (value != null) {
-                        Map<String, List<Diary>> groupedData = new LinkedHashMap<>();
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
+                        // Đọc tất cả nhật ký rồi sắp xếp mới nhất trước
+                        // (thay cho orderBy để không cần composite index)
+                        List<Diary> diaries = new ArrayList<>();
                         for (QueryDocumentSnapshot doc : value) {
                             Diary diary = doc.toObject(Diary.class);
                             diary.setDiaryId(doc.getId());
+                            diaries.add(diary);
+                        }
 
+                        Collections.sort(diaries, (d1, d2) -> {
+                            if (d1.getCreatedAt() == null) return 1;
+                            if (d2.getCreatedAt() == null) return -1;
+                            return d2.getCreatedAt().compareTo(d1.getCreatedAt());
+                        });
+
+                        Map<String, List<Diary>> groupedData = new LinkedHashMap<>();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                        for (Diary diary : diaries) {
                             String dateStr = "Chưa rõ ngày";
                             if (diary.getCreatedAt() != null) {
                                 Date date = diary.getCreatedAt().toDate();

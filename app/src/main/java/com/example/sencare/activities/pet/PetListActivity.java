@@ -25,7 +25,6 @@ import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -34,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -108,7 +108,6 @@ public class PetListActivity extends AppCompatActivity {
 
 
         petListener = dbHelper.getPetsByOwner(uid)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((@Nullable QuerySnapshot value,
                                       @Nullable FirebaseFirestoreException error) -> {
                     if (error != null) {
@@ -130,6 +129,14 @@ public class PetListActivity extends AppCompatActivity {
                         pet.setPetId(doc.getId());
                         petList.add(pet);
                     }
+
+
+                    // Sắp xếp mới nhất trước (thay cho orderBy để không cần composite index)
+                    Collections.sort(petList, (p1, p2) -> {
+                        if (p1.getCreatedAt() == null) return 1;
+                        if (p2.getCreatedAt() == null) return -1;
+                        return p2.getCreatedAt().compareTo(p1.getCreatedAt());
+                    });
 
 
                     petAdapter.notifyDataSetChanged();

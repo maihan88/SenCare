@@ -189,7 +189,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(spaLatLng)
                     .title(node.spa.getSpaName())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpetspa)));
             markerMap.put(marker, node);
         }
 

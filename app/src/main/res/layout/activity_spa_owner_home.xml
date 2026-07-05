@@ -9,6 +9,7 @@
     android:orientation="vertical"
     android:background="@drawable/bg_app"
     android:padding="16dp"
+    android:fitsSystemWindows="true"
     tools:context=".activities.dashboard.SpaOwnerHomeActivity">
 
     <com.google.android.material.button.MaterialButton
@@ -32,21 +33,21 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
-    <LinearLayout
-        android:id="@+id/bannerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/bannerLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="180dp"-->
+<!--        android:layout_marginTop="4dp"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal">-->
 
-        <ImageView
-            android:id="@+id/ivBanner"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/spa_banner" />
-    </LinearLayout>
+<!--        <ImageView-->
+<!--            android:id="@+id/ivBanner"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="180dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/spa_banner" />-->
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/layoutMenu"

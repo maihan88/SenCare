@@ -52,10 +52,6 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".activities.MapTest"
-            android:exported="false"
-            android:label="@string/title_activity_map_test" />
-        <activity
             android:name=".activities.vet.VetMapActivity"
             android:exported="false" />
         <activity

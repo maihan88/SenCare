@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">SenCare</string>
-    <string name="title_activity_map_test">MapTest</string>
 
     <!-- ===== Chữ dùng lại (UI) ===== -->
     <string name="action_login">Đăng nhập</string>

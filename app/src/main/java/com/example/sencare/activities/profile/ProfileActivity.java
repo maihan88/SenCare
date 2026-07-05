@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
+import com.example.sencare.activities.dashboard.UserFormActivity;
 import com.example.sencare.activities.dashboard.UserHomeActivity;
 import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
@@ -46,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Nút Chỉnh sửa
         if (btnEdit != null) {
             btnEdit.setOnClickListener(v -> {
-                Intent intent = new Intent(ProfileActivity.this, com.example.sencare.activities.dashboard.UserFormActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, UserFormActivity.class);
                 intent.putExtra("IS_EDIT_MODE", true);
                 startActivity(intent);
             });

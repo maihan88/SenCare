@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sencare.R;
+import com.example.sencare.activities.dashboard.UserFormActivity;
+import com.example.sencare.activities.spaowner.SpaFormActivity;
 import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
@@ -96,10 +98,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                     Intent intent;
                     if ("spa_owner".equals(role)) {
-                        intent = new Intent(RegisterActivity.this, com.example.sencare.activities.spaowner.SpaFormActivity.class);
+                        intent = new Intent(RegisterActivity.this, SpaFormActivity.class);
                     } else {
                         // Chuyển sang UserFormActivity để cài đặt profile (ảnh, tên hiển thị) cho user thường
-                        intent = new Intent(RegisterActivity.this, com.example.sencare.activities.dashboard.UserFormActivity.class);
+                        intent = new Intent(RegisterActivity.this, UserFormActivity.class);
                         intent.putExtra("IS_EDIT_MODE", false);
                     }
                     startActivity(intent);

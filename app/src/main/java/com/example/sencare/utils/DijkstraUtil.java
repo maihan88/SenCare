@@ -4,10 +4,7 @@ import com.example.sencare.models.Spa;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
 
 public class DijkstraUtil {
 
@@ -15,11 +12,6 @@ public class DijkstraUtil {
         public String id;
         public double distance;
         public Spa spa;
-
-        public Node(String id, double distance) {
-            this.id = id;
-            this.distance = distance;
-        }
 
         public Node(Spa spa, double distance) {
             this.id = spa.getSpaId();

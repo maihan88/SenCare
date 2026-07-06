@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bg_app"
-    android:padding="16dp"
     android:fitsSystemWindows="true"
     tools:context=".activities.home.UserHomeActivity">
+
+    <!-- Lớp trong giữ padding thật (fitsSystemWindows ở lớp gốc sẽ ghi đè padding,
+         nên padding nội dung phải đặt ở đây) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/btnLogout"
@@ -17,55 +27,70 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginTop="4dp"
-        android:background="@drawable/bg_exit"
-        android:paddingHorizontal="22dp"
-        android:paddingVertical="9dp"
+        android:background="@drawable/bg_logout_chip"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="7dp"
         android:text="@string/action_logout"
-        android:textColor="@color/white"
+        android:textColor="@color/accent_coral_dark"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/ivLogo"
         android:layout_width="match_parent"
-        android:layout_height="92dp"
+        android:layout_height="84dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/bannerLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="180dp"-->
-<!--        android:layout_marginTop="4dp"-->
-<!--        android:gravity="center"-->
-<!--        android:orientation="horizontal">-->
+    <!-- Lời chào -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/ivBanner"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="180dp"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            android:src="@drawable/banneruser" />-->
-<!--    </LinearLayout>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home_greeting"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/home_subtitle"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutMenu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp"
         android:layout_weight="1"
-        android:background="@drawable/bg_menu2"
+        android:background="@drawable/bg_home_panel"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="2dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="14dp">
 
         <!-- Hàng 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="horizontal"
             android:weightSum="2">
 
@@ -75,7 +100,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_tile_mint"
+                android:background="@drawable/bg_home_tile_mint"
+                android:elevation="3dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -89,7 +115,7 @@
                     android:id="@+id/tvPet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/menu_pet"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
@@ -101,7 +127,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_tile_yellow"
+                android:background="@drawable/bg_home_tile_yellow"
+                android:elevation="3dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -115,7 +142,7 @@
                     android:id="@+id/tvDiary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/menu_diary"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
@@ -128,6 +155,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="horizontal"
             android:weightSum="2">
 
@@ -137,7 +166,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_tile_coral"
+                android:background="@drawable/bg_home_tile_coral"
+                android:elevation="3dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -151,7 +181,7 @@
                     android:id="@+id/tvVet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/menu_vet"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
@@ -163,7 +193,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_tile_sky"
+                android:background="@drawable/bg_home_tile_sky"
+                android:elevation="3dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -177,7 +208,7 @@
                     android:id="@+id/tvSpa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/menu_spa"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
@@ -200,7 +231,7 @@
             android:layout_width="120dp"
             android:layout_height="58dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_menu"
+            android:background="@drawable/bg_nav_active"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -208,14 +239,15 @@
                 android:id="@+id/ivHome"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/home" />
+                android:src="@drawable/home"
+                app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/tvHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_home"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -244,6 +276,8 @@
                 android:textStyle="bold"
                 android:textSize="11sp" />
         </LinearLayout>
+
+    </LinearLayout>
 
     </LinearLayout>
 

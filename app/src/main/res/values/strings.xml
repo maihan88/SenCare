@@ -29,4 +29,8 @@
     <string name="menu_diary">Nhật ký</string>
     <string name="menu_vet">Trạm thú y</string>
     <string name="menu_spa">Đặt lịch spa</string>
+
+    <!-- ===== Trang chủ ===== -->
+    <string name="home_greeting">Xin chào</string>
+    <string name="home_subtitle">Hôm nay bé cưng cần gì nào?</string>
 </resources>

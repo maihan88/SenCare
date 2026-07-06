@@ -4,19 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
 import com.example.sencare.adapters.PetSelectAdapter;
 import com.example.sencare.adapters.ServiceSelectAdapter;
+import com.example.sencare.databinding.ActivityBookingFormBinding;
 import com.example.sencare.models.Booking;
 import com.example.sencare.models.Pet;
 import com.example.sencare.models.Spa;
@@ -32,11 +29,7 @@ import java.util.List;
 
 public class BookingFormActivity extends AppCompatActivity {
 
-    private ImageButton btnBack;
-    private ImageView imgSpa;
-    private TextView tvSpaName, tvDate, tvTime;
-    private RecyclerView rvPets, rvServices;
-    private Button btnConfirm;
+    private ActivityBookingFormBinding binding;
 
     private FirestoreHelper dbHelper;
     private String spaId, spaName, spaImage;
@@ -50,7 +43,7 @@ public class BookingFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_booking_form);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_booking_form);
 
         dbHelper = new FirestoreHelper();
 
@@ -58,40 +51,31 @@ public class BookingFormActivity extends AppCompatActivity {
         spaName = getIntent().getStringExtra("SPA_NAME");
         spaImage = getIntent().getStringExtra("SPA_IMAGE");
 
-        btnBack = findViewById(R.id.btnBack);
-        imgSpa = findViewById(R.id.imgSpa);
-        tvSpaName = findViewById(R.id.tvSpaName);
-        tvDate = findViewById(R.id.tvDate);
-        tvTime = findViewById(R.id.tvTime);
-        rvPets = findViewById(R.id.rvPets);
-        rvServices = findViewById(R.id.rvServices);
-        btnConfirm = findViewById(R.id.btnConfirm);
-
-        tvSpaName.setText(spaName);
+        binding.tvSpaName.setText(spaName);
         if (spaImage != null && !spaImage.isEmpty()) {
-            Glide.with(this).load(spaImage).placeholder(R.drawable.iconpetspa).into(imgSpa);
+            Glide.with(this).load(spaImage).placeholder(R.drawable.iconpetspa).into(binding.imgSpa);
         }
 
         petAdapter = new PetSelectAdapter(petList, pet -> {});
-        rvPets.setAdapter(petAdapter);
+        binding.rvPets.setAdapter(petAdapter);
 
         serviceAdapter = new ServiceSelectAdapter(serviceList);
-        rvServices.setAdapter(serviceAdapter);
+        binding.rvServices.setAdapter(serviceAdapter);
 
-        btnBack.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        tvDate.setOnClickListener(v -> {
+        binding.tvDate.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 bookingCalendar.set(Calendar.YEAR, year);
                 bookingCalendar.set(Calendar.MONTH, month);
                 bookingCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                tvDate.setText(String.format("%02d/%02d/%d", month + 1, dayOfMonth, year));
+                binding.tvDate.setText(String.format("%02d/%02d/%d", month + 1, dayOfMonth, year));
             }, bookingCalendar.get(Calendar.YEAR), bookingCalendar.get(Calendar.MONTH), bookingCalendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
             datePickerDialog.show();
         });
 
-        tvTime.setOnClickListener(v -> {
+        binding.tvTime.setOnClickListener(v -> {
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
                 bookingCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 bookingCalendar.set(Calendar.MINUTE, minute);
@@ -100,16 +84,16 @@ public class BookingFormActivity extends AppCompatActivity {
                 String amPm = hourOfDay < 12 ? "AM" : "PM";
                 int hour = hourOfDay % 12;
                 if (hour == 0) hour = 12;
-                tvTime.setText(String.format("%02d:%02d %s", hour, minute, amPm));
+                binding.tvTime.setText(String.format("%02d:%02d %s", hour, minute, amPm));
             }, bookingCalendar.get(Calendar.HOUR_OF_DAY), bookingCalendar.get(Calendar.MINUTE), false);
             timePickerDialog.show();
         });
 
-        btnConfirm.setOnClickListener(v -> {
+        binding.btnConfirm.setOnClickListener(v -> {
             Pet selectedPet = petAdapter.getSelectedPet();
             String selectedService = serviceAdapter.getSelectedService();
-            String date = tvDate.getText().toString();
-            String time = tvTime.getText().toString();
+            String date = binding.tvDate.getText().toString();
+            String time = binding.tvTime.getText().toString();
 
             if (selectedPet == null) {
                 Toast.makeText(this, "Vui lòng chọn thú cưng", Toast.LENGTH_SHORT).show();

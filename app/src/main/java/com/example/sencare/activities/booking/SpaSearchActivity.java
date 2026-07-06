@@ -2,35 +2,27 @@ package com.example.sencare.activities.booking;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.sencare.R;
+import com.example.sencare.databinding.ActivitySpaSearchBinding;
 
 public class SpaSearchActivity extends AppCompatActivity {
 
-    private ImageButton btnBack;
-    private EditText etDistance;
-    private Button btnSearch, btnBookingList;
+    private ActivitySpaSearchBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spa_search);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_spa_search);
 
-        btnBack = findViewById(R.id.btnBack);
-        etDistance = findViewById(R.id.etDistance);
-        btnSearch = findViewById(R.id.btnSearch);
-        btnBookingList = findViewById(R.id.btnBookingList);
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        btnBack.setOnClickListener(v -> finish());
-
-        btnSearch.setOnClickListener(v -> {
-            String distanceStr = etDistance.getText().toString().trim();
+        binding.btnSearch.setOnClickListener(v -> {
+            String distanceStr = binding.etDistance.getText().toString().trim();
             if (distanceStr.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập khoảng cách", Toast.LENGTH_SHORT).show();
                 return;
@@ -51,7 +43,7 @@ public class SpaSearchActivity extends AppCompatActivity {
             }
         });
 
-        btnBookingList.setOnClickListener(v -> {
+        binding.btnBookingList.setOnClickListener(v -> {
             startActivity(new Intent(this, BookingListActivity.class));
         });
     }

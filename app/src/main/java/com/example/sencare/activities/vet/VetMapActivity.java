@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.sencare.R;
 import com.example.sencare.databinding.ActivityVetMapBinding;
@@ -43,8 +44,7 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityVetMapBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_vet_map);
 
         dbHelper = new FirestoreHelper();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

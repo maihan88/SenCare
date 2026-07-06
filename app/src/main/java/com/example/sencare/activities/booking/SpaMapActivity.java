@@ -6,17 +6,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.sencare.R;
+import com.example.sencare.databinding.ActivitySpaMapBinding;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.DijkstraUtil;
 import com.example.sencare.utils.FirestoreHelper;
@@ -49,11 +47,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private double initialRadius;
     private LatLng userLatLng;
 
-    private ImageButton btnBack;
-    private TextView tvRadiusInfo, tvSpaCount;
-    private CardView cvSpaInfo;
-    private TextView tvSpaName, tvSpaAddress, tvDistance;
-    private Button btnViewDetail, btnBookNow;
+    private ActivitySpaMapBinding binding;
 
     private List<Spa> allSpas = new ArrayList<>();
     private Map<Marker, DijkstraUtil.Node> markerMap = new HashMap<>();
@@ -62,24 +56,14 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spa_map);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_spa_map);
 
         dbHelper = new FirestoreHelper();
         initialRadius = getIntent().getDoubleExtra("RADIUS", 5.0);
 
-        btnBack = findViewById(R.id.btnBack);
-        tvRadiusInfo = findViewById(R.id.tvRadiusInfo);
-        tvSpaCount = findViewById(R.id.tvSpaCount);
-        cvSpaInfo = findViewById(R.id.cvSpaInfo);
-        tvSpaName = findViewById(R.id.tvSpaName);
-        tvSpaAddress = findViewById(R.id.tvSpaAddress);
-        tvDistance = findViewById(R.id.tvDistance);
-        btnViewDetail = findViewById(R.id.btnViewDetail);
-        btnBookNow = findViewById(R.id.btnBookNow);
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        btnBack.setOnClickListener(v -> finish());
-
-        btnViewDetail.setOnClickListener(v -> {
+        binding.btnViewDetail.setOnClickListener(v -> {
             if (selectedNode != null) {
                 Intent intent = new Intent(this, SpaDetailActivity.class);
                 intent.putExtra("SPA_ID", selectedNode.spa.getSpaId());
@@ -88,7 +72,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-        btnBookNow.setOnClickListener(v -> {
+        binding.btnBookNow.setOnClickListener(v -> {
             if (selectedNode != null) {
                 Intent intent = new Intent(this, BookingFormActivity.class);
                 intent.putExtra("SPA_ID", selectedNode.spa.getSpaId());
@@ -184,8 +168,8 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             finalRadius = Math.max(initialRadius, Math.ceil(maxDist));
         }
 
-        tvRadiusInfo.setText(String.format("Bán kính %.0f km", finalRadius));
-        tvSpaCount.setText(String.format("%d spa", filteredSpas.size()));
+        binding.tvRadiusInfo.setText(String.format("Bán kính %.0f km", finalRadius));
+        binding.tvSpaCount.setText(String.format("%d spa", filteredSpas.size()));
 
         mMap.clear();
         markerMap.clear();
@@ -207,14 +191,14 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             return false;
         });
 
-        mMap.setOnMapClickListener(latLng -> cvSpaInfo.setVisibility(View.GONE));
+        mMap.setOnMapClickListener(latLng -> binding.cvSpaInfo.setVisibility(View.GONE));
     }
 
     private void showSpaInfo(DijkstraUtil.Node node) {
-        tvSpaName.setText(node.spa.getSpaName());
-        tvSpaAddress.setText(node.spa.getAddress());
-        tvDistance.setText(String.format("%.1f km", node.distance));
-        cvSpaInfo.setVisibility(View.VISIBLE);
+        binding.tvSpaName.setText(node.spa.getSpaName());
+        binding.tvSpaAddress.setText(node.spa.getAddress());
+        binding.tvDistance.setText(String.format("%.1f km", node.distance));
+        binding.cvSpaInfo.setVisibility(View.VISIBLE);
     }
 
     @Override

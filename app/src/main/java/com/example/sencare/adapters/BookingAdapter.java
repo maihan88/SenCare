@@ -3,13 +3,12 @@ package com.example.sencare.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sencare.R;
+import com.example.sencare.databinding.ItemBookingBinding;
 import com.example.sencare.models.Booking;
 
 import java.util.List;
@@ -33,29 +32,27 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking, parent, false);
-        return new BookingViewHolder(view);
+        ItemBookingBinding binding = ItemBookingBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new BookingViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         Booking booking = bookingList.get(position);
-        holder.tvSpaName.setText(booking.getSpaName());
-        holder.tvPetService.setText(String.format("%s - %s", booking.getPetName(), booking.getServiceName()));
-        holder.tvDate.setText(booking.getBookingDate());
-        holder.tvTime.setText(booking.getBookingTime());
+        // Các dòng text (spa, thú cưng - dịch vụ, ngày, giờ) được bind trong XML
+        holder.binding.setBooking(booking);
 
         if (isPast) {
-            holder.tvStatus.setText("Đã qua");
-            holder.tvStatus.setBackgroundResource(R.drawable.bg_rounded_white);
-            holder.btnCancel.setVisibility(View.GONE);
+            holder.binding.tvStatus.setText("Đã qua");
+            holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_white);
+            holder.binding.btnCancel.setVisibility(View.GONE);
         } else {
-            holder.tvStatus.setText("Sắp tới");
-            holder.tvStatus.setBackgroundResource(R.drawable.bg_rounded_yellow);
-            holder.btnCancel.setVisibility(View.VISIBLE);
+            holder.binding.tvStatus.setText("Sắp tới");
+            holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_yellow);
+            holder.binding.btnCancel.setVisibility(View.VISIBLE);
         }
 
-        holder.btnCancel.setOnClickListener(v -> cancelListener.onCancel(booking));
+        holder.binding.btnCancel.setOnClickListener(v -> cancelListener.onCancel(booking));
     }
 
     @Override
@@ -64,17 +61,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSpaName, tvStatus, tvPetService, tvDate, tvTime;
-        Button btnCancel;
+        ItemBookingBinding binding;
 
-        public BookingViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvSpaName = itemView.findViewById(R.id.tvSpaName);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvPetService = itemView.findViewById(R.id.tvPetService);
-            tvDate = itemView.findViewById(R.id.tvDate);
-            tvTime = itemView.findViewById(R.id.tvTime);
-            btnCancel = itemView.findViewById(R.id.btnCancel);
+        public BookingViewHolder(@NonNull ItemBookingBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

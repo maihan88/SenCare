@@ -2,28 +2,21 @@ package com.example.sencare.activities.booking;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.example.sencare.R;
+import com.example.sencare.databinding.ActivitySpaDetailBinding;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 public class SpaDetailActivity extends AppCompatActivity {
 
-    private ImageButton btnBack;
-    private ImageView imgSpa;
-    private TextView tvSpaName, tvDistance, tvSpaAddress, tvSpaPhone, tvPriceRange, tvSpaDescription;
-    private ChipGroup cgServices;
-    private Button btnBookNow;
+    private ActivitySpaDetailBinding binding;
 
     private FirestoreHelper dbHelper;
     private String spaId;
@@ -33,27 +26,16 @@ public class SpaDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spa_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_spa_detail);
 
         dbHelper = new FirestoreHelper();
 
         spaId = getIntent().getStringExtra("SPA_ID");
         distance = getIntent().getDoubleExtra("DISTANCE", 0);
 
-        btnBack = findViewById(R.id.btnBack);
-        imgSpa = findViewById(R.id.imgSpa);
-        tvSpaName = findViewById(R.id.tvSpaName);
-        tvDistance = findViewById(R.id.tvDistance);
-        tvSpaAddress = findViewById(R.id.tvSpaAddress);
-        tvSpaPhone = findViewById(R.id.tvSpaPhone);
-        tvPriceRange = findViewById(R.id.tvPriceRange);
-        tvSpaDescription = findViewById(R.id.tvSpaDescription);
-        cgServices = findViewById(R.id.cgServices);
-        btnBookNow = findViewById(R.id.btnBookNow);
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        btnBack.setOnClickListener(v -> finish());
-
-        btnBookNow.setOnClickListener(v -> {
+        binding.btnBookNow.setOnClickListener(v -> {
             if (mSpa != null) {
                 Intent intent = new Intent(this, BookingFormActivity.class);
                 intent.putExtra("SPA_ID", mSpa.getSpaId());
@@ -84,25 +66,22 @@ public class SpaDetailActivity extends AppCompatActivity {
     }
 
     private void displaySpaDetail() {
-        tvSpaName.setText(mSpa.getSpaName());
-        tvDistance.setText(String.format("%.1f km", distance));
-        tvSpaAddress.setText(mSpa.getAddress());
-        tvSpaPhone.setText(mSpa.getPhone());
-        tvPriceRange.setText(mSpa.getPriceRange());
-        tvSpaDescription.setText(mSpa.getDescription());
+        // Tên, địa chỉ, SĐT, khoảng giá, giới thiệu được bind trong XML
+        binding.setSpa(mSpa);
+        binding.tvDistance.setText(String.format("%.1f km", distance));
 
         if (mSpa.getImageUrl() != null && !mSpa.getImageUrl().isEmpty()) {
-            Glide.with(this).load(mSpa.getImageUrl()).placeholder(R.drawable.placeholder).into(imgSpa);
+            Glide.with(this).load(mSpa.getImageUrl()).placeholder(R.drawable.placeholder).into(binding.imgSpa);
         }
 
-        cgServices.removeAllViews();
+        binding.cgServices.removeAllViews();
         if (mSpa.getServices() != null) {
             for (String service : mSpa.getServices()) {
                 Chip chip = new Chip(this);
                 chip.setText(service);
                 chip.setChipBackgroundColorResource(R.color.accent_yellow);
                 chip.setTextColor(getResources().getColor(R.color.text_green));
-                cgServices.addView(chip);
+                binding.cgServices.addView(chip);
             }
         }
     }

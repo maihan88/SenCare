@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cvPet"
-    android:layout_width="90dp"
-    android:layout_height="110dp"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/mint_light"
-    app:strokeWidth="1dp">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="pet"
+            type="com.example.sencare.models.Pet" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvPet"
+        android:layout_width="90dp"
+        android:layout_height="110dp"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:strokeColor="@color/mint_light"
+        app:strokeWidth="1dp">
 
     <LinearLayout
         android:id="@+id/llPetContainer"
@@ -52,6 +60,7 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@{pet.name}"
             android:textColor="@color/text_green"
             android:textSize="13sp"
             android:textStyle="bold"
@@ -63,8 +72,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@{pet.species}"
             android:textColor="@color/text_blue"
             android:textSize="10sp"
             tools:text="Mèo Anh lông ngắn" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

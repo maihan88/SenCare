@@ -2,14 +2,14 @@ package com.example.sencare.activities.booking;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.sencare.R;
 import com.example.sencare.adapters.BookingAdapter;
+import com.example.sencare.databinding.ActivityBookingListBinding;
 import com.example.sencare.models.Booking;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
@@ -22,8 +22,7 @@ import java.util.List;
 
 public class BookingListActivity extends AppCompatActivity {
 
-    private ImageButton btnBack;
-    private RecyclerView rvUpcoming, rvPast;
+    private ActivityBookingListBinding binding;
     private List<Booking> upcomingList = new ArrayList<>();
     private List<Booking> pastList = new ArrayList<>();
     private BookingAdapter upcomingAdapter, pastAdapter;
@@ -32,21 +31,17 @@ public class BookingListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_booking_list);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_booking_list);
 
         dbHelper = new FirestoreHelper();
 
-        btnBack = findViewById(R.id.btnBack);
-        rvUpcoming = findViewById(R.id.rvUpcoming);
-        rvPast = findViewById(R.id.rvPast);
-
         upcomingAdapter = new BookingAdapter(upcomingList, false, booking -> showCancelDialog(booking));
-        rvUpcoming.setAdapter(upcomingAdapter);
+        binding.rvUpcoming.setAdapter(upcomingAdapter);
 
         pastAdapter = new BookingAdapter(pastList, true, booking -> {});
-        rvPast.setAdapter(pastAdapter);
+        binding.rvPast.setAdapter(pastAdapter);
 
-        btnBack.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         fetchBookings();
     }

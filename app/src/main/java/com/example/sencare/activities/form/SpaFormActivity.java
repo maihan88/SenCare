@@ -7,9 +7,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
@@ -25,12 +23,12 @@ import com.cloudinary.android.callback.UploadCallback;
 import com.example.sencare.R;
 import com.example.sencare.activities.home.SpaOwnerHomeActivity;
 import com.example.sencare.activities.map.MapPickerActivity;
+import com.example.sencare.databinding.ActivitySpaFormBinding;
 import com.example.sencare.models.Spa;
 import com.example.sencare.utils.CloudinaryUtil;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.example.sencare.utils.ImageUtil;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -45,10 +43,7 @@ public class SpaFormActivity extends AppCompatActivity {
     private static final int IMAGE_CAPTURE_REQUEST_CODE = 1003;
     private static final int CAMERA_PERMISSION_CODE = 101;
 
-    private EditText etSpaName, etAddress, etPhone, etDescription, etServices, etPriceMin, etPriceMax, etLocation;
-    private ImageButton btnPickMap, btnBack;
-    private ImageView ivSpaImage;
-    private MaterialButton btnSelectImage, btnCaptureImage, btnSave;
+    private ActivitySpaFormBinding binding;
 
     private FirestoreHelper dbHelper;
     private String currentSpaId;
@@ -61,25 +56,10 @@ public class SpaFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spa_form);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_spa_form);
 
         CloudinaryUtil.init(this);
         dbHelper = new FirestoreHelper();
-
-        etSpaName = findViewById(R.id.etSpaName);
-        etAddress = findViewById(R.id.etAddress);
-        etPhone = findViewById(R.id.etPhone);
-        etDescription = findViewById(R.id.etDescription);
-        etServices = findViewById(R.id.etServices);
-        etPriceMin = findViewById(R.id.etPriceMin);
-        etPriceMax = findViewById(R.id.etPriceMax);
-        etLocation = findViewById(R.id.etLocation);
-        btnPickMap = findViewById(R.id.btnPickMap);
-        btnBack = findViewById(R.id.btnBack);
-        ivSpaImage = findViewById(R.id.ivSpaImage);
-        btnSelectImage = findViewById(R.id.btnSelectImage);
-        btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        btnSave = findViewById(R.id.btnSave);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang lưu thông tin...");
@@ -95,19 +75,19 @@ public class SpaFormActivity extends AppCompatActivity {
             currentSpaId = UUID.randomUUID().toString();
         }
 
-        btnBack.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        btnPickMap.setOnClickListener(v -> {
+        binding.btnPickMap.setOnClickListener(v -> {
             Intent intent = new Intent(SpaFormActivity.this, MapPickerActivity.class);
             startActivityForResult(intent, MAP_PICKER_REQUEST_CODE);
         });
 
-        btnSelectImage.setOnClickListener(v -> {
+        binding.btnSelectImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
         });
 
-        btnCaptureImage.setOnClickListener(v -> {
+        binding.btnCaptureImage.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             } else {
@@ -115,14 +95,14 @@ public class SpaFormActivity extends AppCompatActivity {
             }
         });
 
-        btnSave.setOnClickListener(v -> {
-            String name = etSpaName.getText().toString().trim();
-            String address = etAddress.getText().toString().trim();
-            String phone = etPhone.getText().toString().trim();
-            String description = etDescription.getText().toString().trim();
-            String servicesStr = etServices.getText().toString().trim();
-            String priceMinStr = etPriceMin.getText().toString().trim();
-            String priceMaxStr = etPriceMax.getText().toString().trim();
+        binding.btnSave.setOnClickListener(v -> {
+            String name = binding.etSpaName.getText().toString().trim();
+            String address = binding.etAddress.getText().toString().trim();
+            String phone = binding.etPhone.getText().toString().trim();
+            String description = binding.etDescription.getText().toString().trim();
+            String servicesStr = binding.etServices.getText().toString().trim();
+            String priceMinStr = binding.etPriceMin.getText().toString().trim();
+            String priceMaxStr = binding.etPriceMax.getText().toString().trim();
             String priceRange = buildPriceRange(priceMinStr, priceMaxStr);
 
             if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
@@ -164,26 +144,26 @@ public class SpaFormActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 Spa spa = documentSnapshot.toObject(Spa.class);
                 if (spa != null) {
-                    etSpaName.setText(spa.getSpaName());
-                    etAddress.setText(spa.getAddress());
-                    etPhone.setText(spa.getPhone());
-                    etDescription.setText(spa.getDescription());
+                    binding.etSpaName.setText(spa.getSpaName());
+                    binding.etAddress.setText(spa.getAddress());
+                    binding.etPhone.setText(spa.getPhone());
+                    binding.etDescription.setText(spa.getDescription());
                     if (spa.getPriceRange() != null && spa.getPriceRange().contains(" - ")) {
                         String[] parts = spa.getPriceRange().split(" - ");
-                        etPriceMin.setText(parts[0].replaceAll("[^\\d]", ""));
-                        etPriceMax.setText(parts[1].replaceAll("[^\\d]", ""));
+                        binding.etPriceMin.setText(parts[0].replaceAll("[^\\d]", ""));
+                        binding.etPriceMax.setText(parts[1].replaceAll("[^\\d]", ""));
                     }
                     latitude = spa.getLatitude();
                     longitude = spa.getLongitude();
-                    etLocation.setText(latitude + ", " + longitude);
+                    binding.etLocation.setText(latitude + ", " + longitude);
 
                     if (spa.getServices() != null) {
-                        etServices.setText(String.join(", ", spa.getServices()));
+                        binding.etServices.setText(String.join(", ", spa.getServices()));
                     }
 
                     uploadedImageUrl = spa.getImageUrl();
                     uploadedPublicId = spa.getImagePublicId();
-                    Glide.with(this).load(uploadedImageUrl).into(ivSpaImage);
+                    Glide.with(this).load(uploadedImageUrl).into(binding.ivSpaImage);
                 }
             }
         });
@@ -201,7 +181,7 @@ public class SpaFormActivity extends AppCompatActivity {
 
     // Upload ảnh lên Cloudinary rồi lưu spa
     private void uploadImageAndSave(String name, String address, String phone, String description, String servicesStr, String priceRange) {
-        btnSave.setEnabled(false);
+        binding.btnSave.setEnabled(false);
         progressDialog.show();
         MediaManager.get().upload(selectedImageUri)
                 .callback(new UploadCallback() {
@@ -217,7 +197,7 @@ public class SpaFormActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        btnSave.setEnabled(true);
+                        binding.btnSave.setEnabled(true);
                         progressDialog.dismiss();
                         Toast.makeText(SpaFormActivity.this, "Lỗi upload ảnh: " + error.getDescription(), Toast.LENGTH_SHORT).show();
                     }
@@ -253,7 +233,7 @@ public class SpaFormActivity extends AppCompatActivity {
         dbHelper.saveSpa(spa).addOnSuccessListener(aVoid -> {
             updateUserAndFinish();
         }).addOnFailureListener(e -> {
-            btnSave.setEnabled(true);
+            binding.btnSave.setEnabled(true);
             progressDialog.dismiss();
             Toast.makeText(this, "Lỗi lưu dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
@@ -273,7 +253,7 @@ public class SpaFormActivity extends AppCompatActivity {
             }
         }).addOnFailureListener(e -> {
             progressDialog.dismiss();
-            btnSave.setEnabled(true);
+            binding.btnSave.setEnabled(true);
             Toast.makeText(this, "Lỗi cập nhật user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
@@ -286,17 +266,17 @@ public class SpaFormActivity extends AppCompatActivity {
                 latitude = data.getDoubleExtra("latitude", 0);
                 longitude = data.getDoubleExtra("longitude", 0);
                 String address = data.getStringExtra("address");
-                etLocation.setText(latitude + ", " + longitude);
-                if (address != null && !address.isEmpty()) etAddress.setText(address);
+                binding.etLocation.setText(latitude + ", " + longitude);
+                if (address != null && !address.isEmpty()) binding.etAddress.setText(address);
             } else if (requestCode == IMAGE_PICK_REQUEST_CODE) {
                 selectedImageUri = data.getData();
-                ivSpaImage.setImageURI(selectedImageUri);
+                binding.ivSpaImage.setImageURI(selectedImageUri);
             } else if (requestCode == IMAGE_CAPTURE_REQUEST_CODE) {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
                     if (imageBitmap != null) {
-                        ivSpaImage.setImageBitmap(imageBitmap);
+                        binding.ivSpaImage.setImageBitmap(imageBitmap);
                         selectedImageUri = ImageUtil.getImageUri(this, imageBitmap);
                         Toast.makeText(this, "Ảnh đã được chụp", Toast.LENGTH_SHORT).show();
                     }

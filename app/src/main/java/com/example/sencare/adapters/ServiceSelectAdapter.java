@@ -1,15 +1,12 @@
 package com.example.sencare.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.sencare.R;
+import com.example.sencare.databinding.ItemServiceSelectBinding;
 
 import java.util.List;
 
@@ -25,15 +22,16 @@ public class ServiceSelectAdapter extends RecyclerView.Adapter<ServiceSelectAdap
     @NonNull
     @Override
     public ServiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_service_select, parent, false);
-        return new ServiceViewHolder(view);
+        ItemServiceSelectBinding binding = ItemServiceSelectBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ServiceViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
         String service = serviceList.get(position);
-        holder.tvServiceName.setText(service);
-        holder.cbService.setChecked(selectedPosition == position);
+        // Tên dịch vụ được bind trong XML
+        holder.binding.setService(service);
+        holder.binding.cbService.setChecked(selectedPosition == position);
 
         holder.itemView.setOnClickListener(v -> {
             int previousSelected = selectedPosition;
@@ -56,13 +54,11 @@ public class ServiceSelectAdapter extends RecyclerView.Adapter<ServiceSelectAdap
     }
 
     static class ServiceViewHolder extends RecyclerView.ViewHolder {
-        CheckBox cbService;
-        TextView tvServiceName;
+        ItemServiceSelectBinding binding;
 
-        public ServiceViewHolder(@NonNull View itemView) {
-            super(itemView);
-            cbService = itemView.findViewById(R.id.cbService);
-            tvServiceName = itemView.findViewById(R.id.tvServiceName);
+        public ServiceViewHolder(@NonNull ItemServiceSelectBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

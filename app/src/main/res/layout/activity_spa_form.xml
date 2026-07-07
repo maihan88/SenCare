@@ -209,8 +209,9 @@
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_muted"
                     android:paddingHorizontal="12dp"
-                    android:focusable="false"
-                    android:clickable="true" />
+                    android:hint="Vĩ độ, Kinh độ (vd: 10.762, 106.660)"
+                    android:maxLines="1"
+                    android:inputType="text" />
 
                 <ImageButton
                     android:id="@+id/btnPickMap"

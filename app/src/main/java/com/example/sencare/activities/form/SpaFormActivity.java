@@ -99,14 +99,29 @@ public class SpaFormActivity extends AppCompatActivity {
             String name = binding.etSpaName.getText().toString().trim();
             String address = binding.etAddress.getText().toString().trim();
             String phone = binding.etPhone.getText().toString().trim();
+            String location = binding.etLocation.getText().toString().trim();
             String description = binding.etDescription.getText().toString().trim();
             String servicesStr = binding.etServices.getText().toString().trim();
             String priceMinStr = binding.etPriceMin.getText().toString().trim();
             String priceMaxStr = binding.etPriceMax.getText().toString().trim();
             String priceRange = buildPriceRange(priceMinStr, priceMaxStr);
 
-            if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
+            if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || location.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin bắt buộc", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Đọc toạ độ tự nhập theo dạng "vĩ độ, kinh độ"
+            String[] parts = location.split(",");
+            if (parts.length != 2) {
+                Toast.makeText(this, "Vị trí phải theo dạng: vĩ độ, kinh độ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                latitude = Double.parseDouble(parts[0].trim());
+                longitude = Double.parseDouble(parts[1].trim());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Toạ độ không hợp lệ", Toast.LENGTH_SHORT).show();
                 return;
             }
 

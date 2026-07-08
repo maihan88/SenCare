@@ -16,7 +16,7 @@ import androidx.databinding.DataBindingUtil;
 import com.example.sencare.R;
 import com.example.sencare.databinding.ActivitySpaMapBinding;
 import com.example.sencare.models.Spa;
-import com.example.sencare.utils.DijkstraUtil;
+import com.example.sencare.utils.HaversineUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -50,8 +50,8 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private ActivitySpaMapBinding binding;
 
     private List<Spa> allSpas = new ArrayList<>();
-    private Map<Marker, DijkstraUtil.Node> markerMap = new HashMap<>();
-    private DijkstraUtil.Node selectedNode;
+    private Map<Marker, HaversineUtil.SpaResult> markerMap = new HashMap<>();
+    private HaversineUtil.SpaResult selectedSpa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,20 +64,20 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnViewDetail.setOnClickListener(v -> {
-            if (selectedNode != null) {
+            if (selectedSpa != null) {
                 Intent intent = new Intent(this, SpaDetailActivity.class);
-                intent.putExtra("SPA_ID", selectedNode.spa.getSpaId());
-                intent.putExtra("DISTANCE", selectedNode.distance);
+                intent.putExtra("SPA_ID", selectedSpa.spa.getSpaId());
+                intent.putExtra("DISTANCE", selectedSpa.distance);
                 startActivity(intent);
             }
         });
 
         binding.btnBookNow.setOnClickListener(v -> {
-            if (selectedNode != null) {
+            if (selectedSpa != null) {
                 Intent intent = new Intent(this, BookingFormActivity.class);
-                intent.putExtra("SPA_ID", selectedNode.spa.getSpaId());
-                intent.putExtra("SPA_NAME", selectedNode.spa.getSpaName());
-                intent.putExtra("SPA_IMAGE", selectedNode.spa.getImageUrl());
+                intent.putExtra("SPA_ID", selectedSpa.spa.getSpaId());
+                intent.putExtra("SPA_NAME", selectedSpa.spa.getSpaName());
+                intent.putExtra("SPA_IMAGE", selectedSpa.spa.getImageUrl());
                 startActivity(intent);
             }
         });
@@ -150,11 +150,11 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 });
     }
 
-    // Lọc spa trong bán kính bằng Dijkstra rồi vẽ marker lên bản đồ
+    // Lọc spa trong bán kính bằng Haversine rồi vẽ marker lên bản đồ
     private void processSpas() {
         if (userLatLng == null || allSpas.isEmpty()) return;
 
-        List<DijkstraUtil.Node> filteredSpas = DijkstraUtil.findSpasWithinDistance(
+        List<HaversineUtil.SpaResult> filteredSpas = HaversineUtil.findSpasWithinDistance(
                 userLatLng.latitude, userLatLng.longitude, allSpas, initialRadius
         );
 
@@ -162,8 +162,8 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         if (!filteredSpas.isEmpty()) {
             // Find max distance in results to show final radius used
             double maxDist = 0;
-            for (DijkstraUtil.Node node : filteredSpas) {
-                if (node.distance > maxDist) maxDist = node.distance;
+            for (HaversineUtil.SpaResult spaResult : filteredSpas) {
+                if (spaResult.distance > maxDist) maxDist = spaResult.distance;
             }
             finalRadius = Math.max(initialRadius, Math.ceil(maxDist));
         }
@@ -174,19 +174,19 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         mMap.clear();
         markerMap.clear();
 
-        for (DijkstraUtil.Node node : filteredSpas) {
-            LatLng spaLatLng = new LatLng(node.spa.getLatitude(), node.spa.getLongitude());
+        for (HaversineUtil.SpaResult spaResult : filteredSpas) {
+            LatLng spaLatLng = new LatLng(spaResult.spa.getLatitude(), spaResult.spa.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(spaLatLng)
-                    .title(node.spa.getSpaName())
+                    .title(spaResult.spa.getSpaName())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpetspa)));
-            markerMap.put(marker, node);
+            markerMap.put(marker, spaResult);
         }
 
         mMap.setOnMarkerClickListener(marker -> {
-            selectedNode = markerMap.get(marker);
-            if (selectedNode != null) {
-                showSpaInfo(selectedNode);
+            selectedSpa = markerMap.get(marker);
+            if (selectedSpa != null) {
+                showSpaInfo(selectedSpa);
             }
             return false;
         });
@@ -194,10 +194,10 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         mMap.setOnMapClickListener(latLng -> binding.cvSpaInfo.setVisibility(View.GONE));
     }
 
-    private void showSpaInfo(DijkstraUtil.Node node) {
-        binding.tvSpaName.setText(node.spa.getSpaName());
-        binding.tvSpaAddress.setText(node.spa.getAddress());
-        binding.tvDistance.setText(String.format("%.1f km", node.distance));
+    private void showSpaInfo(HaversineUtil.SpaResult spaResult) {
+        binding.tvSpaName.setText(spaResult.spa.getSpaName());
+        binding.tvSpaAddress.setText(spaResult.spa.getAddress());
+        binding.tvDistance.setText(String.format("%.1f km", spaResult.distance));
         binding.cvSpaInfo.setVisibility(View.VISIBLE);
     }
 

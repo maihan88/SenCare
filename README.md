@@ -423,7 +423,8 @@ com.example.sencare
     ├── ValidationUtil.java
     ├── ImageUtil.java
     ├── CloudinaryUtil.java
-    ├── LocationUtil.java
+    ├── HaversineUtil.java
+    ├── SpaFinderUtil.java
     └── DateTimeUtil.java
 ```
 
@@ -1178,7 +1179,8 @@ adapters/SpaAdapter.java
 adapters/BookingAdapter.java
 models/Booking.java
 models/Spa.java nếu cần đọc dữ liệu spa
-utils/LocationUtil.java
+utils/HaversineUtil.java
+utils/SpaFinderUtil.java
 utils/DateTimeUtil.java
 ```
 

@@ -16,7 +16,8 @@ import androidx.databinding.DataBindingUtil;
 import com.example.sencare.R;
 import com.example.sencare.databinding.ActivitySpaMapBinding;
 import com.example.sencare.models.Spa;
-import com.example.sencare.utils.HaversineUtil;
+import com.example.sencare.models.SpaResult;
+import com.example.sencare.utils.SpaFinderUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -50,8 +51,8 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private ActivitySpaMapBinding binding;
 
     private List<Spa> allSpas = new ArrayList<>();
-    private Map<Marker, HaversineUtil.SpaResult> markerMap = new HashMap<>();
-    private HaversineUtil.SpaResult selectedSpa;
+    private Map<Marker, SpaResult> markerMap = new HashMap<>();
+    private SpaResult selectedSpa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
             if (selectedSpa != null) {
                 Intent intent = new Intent(this, SpaDetailActivity.class);
                 intent.putExtra("SPA_ID", selectedSpa.spa.getSpaId());
-                intent.putExtra("DISTANCE", selectedSpa.distance);
+                intent.putExtra("DISTANCE", selectedSpa.distanceKm);
                 startActivity(intent);
             }
         });
@@ -132,9 +133,9 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
-    // Lắng nghe realtime: có spa mới/đổi thông tin là bản đồ tự cập nhật ngay
+    // Lắng nghe realtime
     private void fetchSpas() {
-        if (spaListener != null) return; // đã đăng ký rồi thì thôi
+        if (spaListener != null) return;
 
         spaListener = dbHelper.getSpasQuery()
                 .addSnapshotListener((value, error) -> {
@@ -152,18 +153,19 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     // Lọc spa trong bán kính bằng Haversine rồi vẽ marker lên bản đồ
     private void processSpas() {
-        if (userLatLng == null || allSpas.isEmpty()) return;
+        if (userLatLng == null || allSpas.isEmpty())
+            return;
 
-        List<HaversineUtil.SpaResult> filteredSpas = HaversineUtil.findSpasWithinDistance(
+        List<SpaResult> filteredSpas = SpaFinderUtil.findSpasWithinDistance(
                 userLatLng.latitude, userLatLng.longitude, allSpas, initialRadius
         );
 
         double finalRadius = initialRadius;
         if (!filteredSpas.isEmpty()) {
-            // Find max distance in results to show final radius used
             double maxDist = 0;
-            for (HaversineUtil.SpaResult spaResult : filteredSpas) {
-                if (spaResult.distance > maxDist) maxDist = spaResult.distance;
+            for (SpaResult spaResult : filteredSpas) {
+                if (spaResult.distanceKm > maxDist)
+                    maxDist = spaResult.distanceKm;
             }
             finalRadius = Math.max(initialRadius, Math.ceil(maxDist));
         }
@@ -174,7 +176,7 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         mMap.clear();
         markerMap.clear();
 
-        for (HaversineUtil.SpaResult spaResult : filteredSpas) {
+        for (SpaResult spaResult : filteredSpas) {
             LatLng spaLatLng = new LatLng(spaResult.spa.getLatitude(), spaResult.spa.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(spaLatLng)
@@ -194,17 +196,16 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         mMap.setOnMapClickListener(latLng -> binding.cvSpaInfo.setVisibility(View.GONE));
     }
 
-    private void showSpaInfo(HaversineUtil.SpaResult spaResult) {
+    private void showSpaInfo(SpaResult spaResult) {
         binding.tvSpaName.setText(spaResult.spa.getSpaName());
         binding.tvSpaAddress.setText(spaResult.spa.getAddress());
-        binding.tvDistance.setText(String.format("%.1f km", spaResult.distance));
+        binding.tvDistance.setText(String.format("%.1f km", spaResult.distanceKm));
         binding.cvSpaInfo.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Gỡ listener realtime khi đóng màn hình để tránh rò rỉ bộ nhớ
         if (spaListener != null) {
             spaListener.remove();
             spaListener = null;

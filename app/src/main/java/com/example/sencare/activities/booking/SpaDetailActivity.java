@@ -48,9 +48,9 @@ public class SpaDetailActivity extends AppCompatActivity {
         fetchSpaDetail();
     }
 
-    // Tải thông tin chi tiết spa rồi hiển thị lên giao diện
     private void fetchSpaDetail() {
-        if (spaId == null) return;
+        if (spaId == null)
+            return;
 
         dbHelper.getSpa(spaId)
                 .addOnSuccessListener(documentSnapshot -> {
@@ -66,7 +66,6 @@ public class SpaDetailActivity extends AppCompatActivity {
     }
 
     private void displaySpaDetail() {
-        // Tên, địa chỉ, SĐT, khoảng giá, giới thiệu được bind trong XML
         binding.setSpa(mSpa);
         binding.tvDistance.setText(String.format("%.1f km", distance));
 

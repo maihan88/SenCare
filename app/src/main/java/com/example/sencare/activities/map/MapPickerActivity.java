@@ -98,12 +98,21 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                if (location != null) {
-                    LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15f));
-                }
-            });
+
+            double initialLat = getIntent().getDoubleExtra("latitude", 0);
+            double initialLng = getIntent().getDoubleExtra("longitude", 0);
+
+            if (initialLat != 0 && initialLng != 0) {
+                LatLng initialPos = new LatLng(initialLat, initialLng);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialPos, 15f));
+            } else {
+                fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15f));
+                    }
+                });
+            }
         }
     }
 

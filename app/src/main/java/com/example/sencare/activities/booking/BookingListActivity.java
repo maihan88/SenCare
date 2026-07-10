@@ -51,7 +51,6 @@ public class BookingListActivity extends AppCompatActivity {
         String userId = FirebaseUtil.getCurrentUserId();
         if (userId == null) return;
 
-        // Fetch all bookings for the user and filter in memory to avoid index requirements
         dbHelper.getBookingsByUser(userId)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     upcomingList.clear();

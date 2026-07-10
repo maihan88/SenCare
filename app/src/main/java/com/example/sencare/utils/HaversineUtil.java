@@ -1,12 +1,7 @@
 package com.example.sencare.utils;
 
 public class HaversineUtil {
-    public static double calculateDistanceKm(
-            double startLat,
-            double startLng,
-            double endLat,
-            double endLng
-    ) {
+    public static double calculateDistanceKm(double startLat, double startLng, double endLat, double endLng) {
         double earthRadius = 6371; // km
         double dLat = Math.toRadians(endLat - startLat);
         double dLng = Math.toRadians(endLng - startLng);

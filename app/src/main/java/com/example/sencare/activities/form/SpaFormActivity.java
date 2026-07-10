@@ -79,6 +79,10 @@ public class SpaFormActivity extends AppCompatActivity {
 
         binding.btnPickMap.setOnClickListener(v -> {
             Intent intent = new Intent(SpaFormActivity.this, MapPickerActivity.class);
+            if (latitude != 0 && longitude != 0) {
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+            }
             startActivityForResult(intent, MAP_PICKER_REQUEST_CODE);
         });
 

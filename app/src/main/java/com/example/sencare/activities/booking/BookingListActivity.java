@@ -46,7 +46,6 @@ public class BookingListActivity extends AppCompatActivity {
         fetchBookings();
     }
 
-    // Tải danh sách lịch hẹn của người dùng, chia thành sắp tới / đã qua (gọi lại sau khi hủy lịch)
     private void fetchBookings() {
         String userId = FirebaseUtil.getCurrentUserId();
         if (userId == null) return;
@@ -62,13 +61,11 @@ public class BookingListActivity extends AppCompatActivity {
                         Booking booking = doc.toObject(Booking.class);
                         booking.setBookingId(doc.getId());
 
-                        // Filter by status "active"
                         if ("active".equals(booking.getStatus())) {
                             allUserBookings.add(booking);
                         }
                     }
 
-                    // Sort by timestamp
                     allUserBookings.sort((b1, b2) -> {
                         if (b1.getBookingTimestamp() == null || b2.getBookingTimestamp() == null) return 0;
                         return b1.getBookingTimestamp().compareTo(b2.getBookingTimestamp());
@@ -88,7 +85,6 @@ public class BookingListActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Lỗi khi tải lịch hẹn: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // Hộp thoại xác nhận hủy lịch (được adapter gọi khi bấm nút hủy trên từng lịch hẹn)
     private void showCancelDialog(Booking booking) {
         new AlertDialog.Builder(this)
                 .setTitle("Hủy lịch")
@@ -102,7 +98,7 @@ public class BookingListActivity extends AppCompatActivity {
         dbHelper.updateBookingStatus(booking.getBookingId(), "cancelled", Timestamp.now())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
-                    fetchBookings(); // Refresh list
+                    fetchBookings();
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Hủy lịch thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }

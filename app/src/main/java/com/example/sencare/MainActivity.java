@@ -1,6 +1,5 @@
 package com.example.sencare;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -16,12 +15,10 @@ public class MainActivity extends AppCompatActivity {
 
     private MaterialButton btnLogin, btnRegister, btnClose;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 11.1 Luồng mở app: Không tự động chuyển hướng, luôn hiện MainActivity
         setContentView(R.layout.activity_main);
 
         btnLogin = findViewById(R.id.btnLogin);

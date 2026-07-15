@@ -2,6 +2,7 @@ package com.example.sencare.activities.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -9,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import com.example.sencare.MainActivity;
 import com.example.sencare.R;
 import com.example.sencare.activities.auth.LoginActivity;
+import com.example.sencare.activities.booking.SpaBookingActivity;
 import com.example.sencare.activities.profile.SpaProfileActivity;
 import com.example.sencare.databinding.ActivitySpaOwnerHomeBinding;
 import com.example.sencare.models.User;
@@ -37,6 +39,17 @@ public class SpaOwnerHomeActivity extends AppCompatActivity {
 
         binding.btnProfile.setOnClickListener(v -> {
             Intent intent = new Intent(this, SpaProfileActivity.class);
+            intent.putExtra("SPA_ID", spaId);
+            startActivity(intent);
+        });
+
+        binding.layoutBooking.setOnClickListener(v -> {
+            if (spaId == null) {
+                Toast.makeText(this, "Bạn chưa tạo hồ sơ spa", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Intent intent = new Intent(this, SpaBookingActivity.class);
             intent.putExtra("SPA_ID", spaId);
             startActivity(intent);
         });

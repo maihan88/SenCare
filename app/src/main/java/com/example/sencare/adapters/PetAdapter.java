@@ -54,6 +54,14 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             holder.imgPetAvatar.setImageResource(R.drawable.bigcatontop);
         }
 
+        if ("memorial".equals(currentPet.getStatus())) {
+            holder.tvMemorialBadge.setVisibility(View.VISIBLE);
+            holder.imgPetAvatar.setAlpha(0.5f);
+        } else {
+            holder.tvMemorialBadge.setVisibility(View.GONE);
+            holder.imgPetAvatar.setAlpha(1f);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), PetDetailActivity.class);
             intent.putExtra("petId",currentPet.getPetId());
@@ -68,7 +76,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     public static class PetViewHolder extends RecyclerView.ViewHolder {
         ImageView imgPetAvatar;
-        TextView tvPetName, tvPetAge, tvPetSpecies, tvPetPersonality;
+        TextView tvPetName, tvPetAge, tvPetSpecies, tvPetPersonality, tvMemorialBadge;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,6 +86,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             tvPetAge = itemView.findViewById(R.id.tvPetAge);
             tvPetSpecies = itemView.findViewById(R.id.tvPetSpecies);
             tvPetPersonality = itemView.findViewById(R.id.tvPetPersonality);
+            tvMemorialBadge = itemView.findViewById(R.id.tvMemorialBadge);
         }
     }
 }

@@ -17,6 +17,7 @@ import com.example.sencare.databinding.ActivityBookingFormBinding;
 import com.example.sencare.models.Booking;
 import com.example.sencare.models.Pet;
 import com.example.sencare.models.Spa;
+import com.example.sencare.models.User;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
 import com.google.firebase.Timestamp;
@@ -39,6 +40,7 @@ public class BookingFormActivity extends AppCompatActivity {
     private List<String> serviceList = new ArrayList<>();
 
     private Calendar bookingCalendar = Calendar.getInstance();
+    private String userName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,43 +109,105 @@ public class BookingFormActivity extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng chọn ngày và giờ", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (bookingCalendar.getTime().before(new Date())) {
+                Toast.makeText(this, "Vui lòng chọn thời gian trong tương lai", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            String userId = FirebaseUtil.getCurrentUserId();
-            if (userId == null) return;
-
-            Booking booking = new Booking();
-            booking.setUserId(userId);
-            booking.setPetId(selectedPet.getPetId());
-            booking.setPetName(selectedPet.getName());
-            booking.setSpaId(spaId);
-            booking.setSpaName(spaName);
-            booking.setServiceName(selectedService);
-            booking.setBookingDate(date);
-            booking.setBookingTime(time);
-            booking.setBookingTimestamp(new Timestamp(bookingCalendar.getTime()));
-            booking.setStatus("active");
-            booking.setCreatedAt(Timestamp.now());
-            booking.setUpdatedAt(Timestamp.now());
-
-            dbHelper.addBooking(booking)
-                    .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(this, "Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, BookingListActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Đặt lịch thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            checkConflictThenSave(selectedPet, selectedService, date, time);
         });
 
         fetchUserData();
         fetchSpaServices();
     }
 
-    // Tải danh sách thú cưng của người dùng để chọn khi đặt lịch
+    private void checkConflictThenSave(Pet selectedPet, String selectedService, String date, String time) {
+        setLoading(true);
+
+        dbHelper.getBookingsBySpaAndDate(spaId, date)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Booking other = doc.toObject(Booking.class);
+
+                        boolean stillCounts = !"cancelled".equals(other.getStatus())
+                                && !"rejected".equals(other.getStatus());
+
+                        if (stillCounts && time.equals(other.getBookingTime())) {
+                            setLoading(false);
+                            Toast.makeText(this, "Khung giờ này đã có người đặt, vui lòng chọn giờ khác", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+
+                    saveBooking(selectedPet, selectedService, date, time);
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Lỗi khi kiểm tra lịch trống: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void saveBooking(Pet selectedPet, String selectedService, String date, String time) {
+        String userId = FirebaseUtil.getCurrentUserId();
+        if (userId == null) {
+            setLoading(false);
+            return;
+        }
+
+        Booking booking = new Booking();
+        booking.setUserId(userId);
+        booking.setUserName(userName);
+        booking.setPetId(selectedPet.getPetId());
+        booking.setPetName(selectedPet.getName());
+        booking.setSpaId(spaId);
+        booking.setSpaName(spaName);
+        booking.setServiceName(selectedService);
+        booking.setBookingDate(date);
+        booking.setBookingTime(time);
+        booking.setBookingTimestamp(new Timestamp(bookingCalendar.getTime()));
+        booking.setStatus("pending");
+        booking.setCreatedAt(Timestamp.now());
+        booking.setUpdatedAt(Timestamp.now());
+
+        dbHelper.addBooking(booking)
+                .addOnSuccessListener(documentReference -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Đặt lịch thành công! Đang chờ spa xác nhận.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(this, BookingListActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Đặt lịch thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void setLoading(boolean isLoading) {
+        binding.btnConfirm.setEnabled(!isLoading);
+
+        if (isLoading) {
+            binding.btnConfirm.setText("Đang xử lý...");
+        } else {
+            binding.btnConfirm.setText("Xác nhận đặt lịch");
+        }
+    }
+
     private void fetchUserData() {
         String userId = FirebaseUtil.getCurrentUserId();
         if (userId == null) return;
+
+        dbHelper.getUser(userId)
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user != null && user.getFullName() != null) {
+                            userName = user.getFullName();
+                        }
+                    }
+                });
 
         dbHelper.getPetsByOwner(userId)
                 .get()
@@ -152,13 +216,15 @@ public class BookingFormActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Pet pet = doc.toObject(Pet.class);
                         pet.setPetId(doc.getId());
-                        petList.add(pet);
+
+                        if (!"memorial".equals(pet.getStatus())) {
+                            petList.add(pet);
+                        }
                     }
                     petAdapter.notifyDataSetChanged();
                 });
     }
 
-    // Tải danh sách dịch vụ của spa để chọn khi đặt lịch
     private void fetchSpaServices() {
         if (spaId == null) return;
 

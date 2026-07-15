@@ -25,7 +25,6 @@ public class TimelineDateAdapter extends RecyclerView.Adapter<TimelineDateAdapte
     @NonNull
     @Override
     public DateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Dùng cái khuôn bự chứa Ngày Tháng và danh sách trượt ngang
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_timeline_date, parent, false);
         return new DateViewHolder(view);
     }
@@ -34,7 +33,6 @@ public class TimelineDateAdapter extends RecyclerView.Adapter<TimelineDateAdapte
     public void onBindViewHolder(@NonNull DateViewHolder holder, int position) {
         DiaryTimelineActivity.TimelineGroup currentGroup = timelineList.get(position);
 
-        // Set chữ Ngày Tháng Năm
         holder.tvTimelineDate.setText(currentGroup.getDate());
 
         TimelineImageAdapter imageAdapter = new TimelineImageAdapter(currentGroup.getDiaries());

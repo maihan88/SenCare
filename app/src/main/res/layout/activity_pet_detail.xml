@@ -56,81 +56,147 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center_horizontal">
+            android:padding="24dp">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="80dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/mint"
-                app:strokeWidth="3dp">
-
-                <ImageView
-                    android:id="@+id/imgDetailAvatar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    tools:srcCompat="@tools:sample/avatars" />
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/tvDetailName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/text_primary"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                tools:text="Lu Lu" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_card_mint"
-                android:padding="18dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvDetailSpecies"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_primary"
-                    tools:text="Giống loài: Chó Corgi" />
-
-                <TextView
-                    android:id="@+id/tvDetailAge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_primary"
-                    tools:text="Tuổi: 2" />
-
-                <TextView
-                    android:id="@+id/tvDetailPersonality"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_primary"
-                    tools:text="Tính cách: Năng động, hay làm nũng" />
-            </LinearLayout>
-
-            <View
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginTop="20dp"
+                        app:cardCornerRadius="80dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/mint"
+                        app:strokeWidth="3dp">
+
+                        <ImageView
+                            android:id="@+id/imgDetailAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            tools:srcCompat="@tools:sample/avatars" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/tvDetailName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        tools:text="Lu Lu" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/bg_card_mint"
+                        android:padding="18dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvDetailSpecies"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            tools:text="Giống loài: Chó Corgi" />
+
+                        <TextView
+                            android:id="@+id/tvDetailAge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            tools:text="Tuổi: 2" />
+
+                        <TextView
+                            android:id="@+id/tvDetailPersonality"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            tools:text="Tính cách: Năng động, hay làm nũng" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutMemorial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_card_memorial"
+                        android:orientation="vertical"
+                        android:padding="18dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="✿Thành kính phân ưu✿"
+                            android:textAlignment="center"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvMemorialDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            tools:text="Lu Lu đã ra đi ngày 14/07/2026" />
+
+                        <TextView
+                            android:id="@+id/tvMemorialMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="15sp"
+                            android:textStyle="italic"
+                            tools:text="Cảm ơn con đã đến bên gia đình mình." />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/btnFarewell"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/dove_l"
+                android:gravity="center"
+                android:textSize="22sp"
+                android:contentDescription="Tiễn biệt bé" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="20dp">
 
                 <com.google.android.material.button.MaterialButton

@@ -1,14 +1,14 @@
 package com.example.sencare.activities.pet;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sencare.R;
@@ -16,7 +16,6 @@ import com.example.sencare.adapters.PetAdapter;
 import com.example.sencare.models.Pet;
 import com.example.sencare.utils.FirebaseUtil;
 import com.example.sencare.utils.FirestoreHelper;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -27,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PetListActivity extends AppCompatActivity {
-    private RecyclerView rvPetList;
+public class MemorialActivity extends AppCompatActivity {
+
+    private RecyclerView rvMemorialList;
     private PetAdapter petAdapter;
-    private List<Pet> petList;
+    private List<Pet> memorialList;
+    private TextView tvEmptyMemorial;
     private ImageView btnBack;
-    private MaterialButton btnAddPet;
-    private View btnMemorial;
 
     private FirestoreHelper dbHelper;
     private ListenerRegistration petListener;
@@ -41,26 +40,17 @@ public class PetListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_list);
+        setContentView(R.layout.activity_memorial);
 
-        rvPetList = findViewById(R.id.rvPetList);
+        rvMemorialList = findViewById(R.id.rvMemorialList);
+        tvEmptyMemorial = findViewById(R.id.tvEmptyMemorial);
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
-        btnAddPet = findViewById(R.id.btnAddPet);
-        btnAddPet.setOnClickListener(v -> {
-            Intent intent = new Intent(PetListActivity.this, PetFormActivity.class);
-            startActivity(intent);
-        });
-        btnMemorial = findViewById(R.id.btnMemorial);
-        btnMemorial.setOnClickListener(v -> {
-            Intent intent = new Intent(PetListActivity.this, MemorialActivity.class);
-            startActivity(intent);
-        });
-        petList = new ArrayList<>();
 
-        petAdapter = new PetAdapter(petList);
-        rvPetList.setLayoutManager(new LinearLayoutManager(this));
-        rvPetList.setAdapter(petAdapter);
+        memorialList = new ArrayList<>();
+
+        petAdapter = new PetAdapter(memorialList);
+        rvMemorialList.setAdapter(petAdapter);
 
         dbHelper = new FirestoreHelper();
     }
@@ -68,7 +58,7 @@ public class PetListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        loadPetsFromFirestore();
+        loadMemorialPets();
     }
 
     @Override
@@ -80,11 +70,11 @@ public class PetListActivity extends AppCompatActivity {
         }
     }
 
-    private void loadPetsFromFirestore() {
+    private void loadMemorialPets() {
         FirebaseUser currentUser = FirebaseUtil.getAuth().getCurrentUser();
 
         if (currentUser == null) {
-            Log.e("PetListActivity", "Chưa đăng nhập, không thể load pet");
+            Toast.makeText(this, "Bạn cần đăng nhập trước!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -94,7 +84,7 @@ public class PetListActivity extends AppCompatActivity {
                 .addSnapshotListener((@Nullable QuerySnapshot value,
                                       @Nullable FirebaseFirestoreException error) -> {
                     if (error != null) {
-                        Log.e("FirestoreError", "Lỗi load danh sách pet: ", error);
+                        Log.e("FirestoreError", "Lỗi load góc tưởng niệm: ", error);
                         return;
                     }
 
@@ -102,29 +92,30 @@ public class PetListActivity extends AppCompatActivity {
                         return;
                     }
 
-                    petList.clear();
+                    memorialList.clear();
 
                     for (QueryDocumentSnapshot doc : value) {
                         Pet pet = doc.toObject(Pet.class);
                         pet.setPetId(doc.getId());
 
-                        if (!"memorial".equals(pet.getStatus())) {
-                            petList.add(pet);
+                        if ("memorial".equals(pet.getStatus())) {
+                            memorialList.add(pet);
                         }
                     }
 
-                    Collections.sort(petList, (p1, p2) -> {
-                        if (p1.getCreatedAt() == null) return 1;
-                        if (p2.getCreatedAt() == null) return -1;
-                        return p2.getCreatedAt().compareTo(p1.getCreatedAt());
+                    Collections.sort(memorialList, (p1, p2) -> {
+                        if (p1.getPassedAwayAt() == null) return 1;
+                        if (p2.getPassedAwayAt() == null) return -1;
+                        return p2.getPassedAwayAt().compareTo(p1.getPassedAwayAt());
                     });
+
+                    if (memorialList.isEmpty()) {
+                        tvEmptyMemorial.setVisibility(View.VISIBLE);
+                    } else {
+                        tvEmptyMemorial.setVisibility(View.GONE);
+                    }
 
                     petAdapter.notifyDataSetChanged();
                 });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

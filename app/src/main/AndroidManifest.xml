@@ -55,6 +55,12 @@
             android:name=".activities.vet.VetMapActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.pet.MemorialActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.booking.SpaBookingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.booking.BookingListActivity"
             android:exported="false" />
         <activity

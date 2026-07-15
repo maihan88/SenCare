@@ -27,7 +27,6 @@ public class UserHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
 
-        // Ánh xạ các view
         btnLogout = findViewById(R.id.btnLogout);
         layoutPet = findViewById(R.id.layoutPet);
         layoutDiary = findViewById(R.id.layoutDiary);
@@ -36,7 +35,6 @@ public class UserHomeActivity extends AppCompatActivity {
         layoutProfile = findViewById(R.id.layoutProfile);
         layoutHome = findViewById(R.id.layoutHome);
 
-        // Xử lý sự kiện đăng xuất
         btnLogout.setOnClickListener(v -> {
             FirebaseUtil.getAuth().signOut();
             Intent intent = new Intent(UserHomeActivity.this, MainActivity.class);
@@ -44,20 +42,17 @@ public class UserHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Xử lý chuyển màn hình Menu
         layoutPet.setOnClickListener(v -> startActivity(new Intent(this, PetListActivity.class)));
         layoutDiary.setOnClickListener(v -> startActivity(new Intent(this, PetDiaryListActivity.class)));
         layoutVet.setOnClickListener(v -> startActivity(new Intent(this, VetMapActivity.class)));
         layoutSpa.setOnClickListener(v -> startActivity(new Intent(this, SpaSearchActivity.class)));
 
-        // Xử lý chuyển màn hình Bottom Navigation
         layoutProfile.setOnClickListener(v -> {
             Intent intent = new Intent(UserHomeActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
 
         layoutHome.setOnClickListener(v -> {
-            // Đang ở trang chủ
         });
     }
 }

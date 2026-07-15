@@ -7,14 +7,12 @@
     android:fitsSystemWindows="true"
     tools:context=".activities.map.MapPickerActivity">
 
-    <!-- Map View -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Center Pin -->
     <ImageView
         android:id="@+id/ivCenterPin"
         android:layout_width="40dp"
@@ -25,7 +23,6 @@
         android:src="@drawable/placeholder"
         app:tint="@color/accent_coral" />
 
-    <!-- Bottom Confirmation Sheet -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

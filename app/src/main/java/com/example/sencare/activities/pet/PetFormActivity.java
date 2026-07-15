@@ -158,7 +158,6 @@ public class PetFormActivity extends AppCompatActivity {
         });
     }
 
-    // Đăng ký launcher chọn ảnh từ thư viện và chụp ảnh (dùng cho listener của nút Gallery/Camera)
     private void initImageLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -187,7 +186,6 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
-    // Đăng ký launcher xin quyền camera (dùng cho listener của nút Camera)
     private void initPermissionLaunchers() {
         cameraPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -201,7 +199,6 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
-    // Mở camera (được gọi cả từ nút Camera lẫn callback cấp quyền)
     private void openCamera() {
         cameraImageUri = createImageUri();
 
@@ -223,7 +220,6 @@ public class PetFormActivity extends AppCompatActivity {
         );
     }
 
-    // Tải dữ liệu thú cưng khi ở chế độ chỉnh sửa
     private void loadPetDataFromFirestore(String petId) {
         dbHelper.getPet(petId)
                 .addOnSuccessListener(documentSnapshot -> {
@@ -257,7 +253,6 @@ public class PetFormActivity extends AppCompatActivity {
                 });
     }
 
-    // Upload ảnh lên Cloudinary rồi lưu dữ liệu thú cưng
     private void uploadImageToCloudinaryThenSave(Map<String, Object> petData) {
         MediaManager.get()
                 .upload(selectedImageUri)
@@ -301,7 +296,6 @@ public class PetFormActivity extends AppCompatActivity {
                 .dispatch();
     }
 
-    // Lưu dữ liệu thú cưng vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void savePetData(Map<String, Object> petData) {
         dbHelper.savePet(currentPetId, petData)
                 .addOnSuccessListener(aVoid -> {

@@ -48,13 +48,11 @@ public class SpaProfileActivity extends AppCompatActivity {
         }
     }
 
-    // Tải và hiển thị thông tin spa (tải lại mỗi khi quay về màn hình)
     private void loadSpaInfo(String spaId) {
         dbHelper.getSpa(spaId).addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Spa spa = documentSnapshot.toObject(Spa.class);
                 if (spa != null) {
-                    // Tên, địa chỉ, SĐT, mô tả được bind trong XML
                     binding.setSpa(spa);
                     binding.tvPriceRange.setText("Khoảng giá: " + spa.getPriceRange());
 

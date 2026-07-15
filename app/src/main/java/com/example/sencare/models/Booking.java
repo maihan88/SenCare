@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp;
 public class Booking extends BaseObservable {
     private String bookingId;
     private String userId;
+    private String userName;
     private String petId;
     private String spaId;
     private String petName;
@@ -22,9 +23,10 @@ public class Booking extends BaseObservable {
     public Booking() {
     }
 
-    public Booking(String bookingId, String userId, String petId, String spaId, String petName, String spaName, String serviceName, String bookingDate, String bookingTime, Timestamp bookingTimestamp, String status, Timestamp createdAt, Timestamp updatedAt) {
+    public Booking(String bookingId, String userId, String userName, String petId, String spaId, String petName, String spaName, String serviceName, String bookingDate, String bookingTime, Timestamp bookingTimestamp, String status, Timestamp createdAt, Timestamp updatedAt) {
         this.bookingId = bookingId;
         this.userId = userId;
+        this.userName = userName;
         this.petId = petId;
         this.spaId = spaId;
         this.petName = petName;
@@ -56,6 +58,16 @@ public class Booking extends BaseObservable {
     public void setUserId(String userId) {
         this.userId = userId;
         notifyPropertyChanged(BR.userId);
+    }
+
+    @Bindable
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+        notifyPropertyChanged(BR.userName);
     }
 
     @Bindable
@@ -173,6 +185,7 @@ public class Booking extends BaseObservable {
         return "Booking{" +
                 "bookingId='" + bookingId + '\'' +
                 ", userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
                 ", petId='" + petId + '\'' +
                 ", spaId='" + spaId + '\'' +
                 ", petName='" + petName + '\'' +

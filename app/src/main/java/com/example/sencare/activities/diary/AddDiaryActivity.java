@@ -107,7 +107,6 @@ public class AddDiaryActivity extends AppCompatActivity {
         });
     }
 
-    // Đăng ký launcher chọn ảnh từ thư viện và chụp ảnh (dùng cho listener của nút Gallery/Camera)
     private void initImageLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -136,7 +135,6 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
-    // Đăng ký launcher xin quyền camera (dùng cho listener của nút Camera)
     private void initPermissionLaunchers() {
         cameraPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -150,7 +148,6 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
-    // Mở camera (được gọi cả từ nút Camera lẫn callback cấp quyền)
     private void openCamera() {
         cameraImageUri = createImageUri();
 
@@ -172,7 +169,6 @@ public class AddDiaryActivity extends AppCompatActivity {
         );
     }
 
-    // Upload ảnh lên Cloudinary rồi lưu nhật ký
     private void uploadImageToCloudinary(String ownerId) {
         MediaManager.get()
                 .upload(selectedImageUri)

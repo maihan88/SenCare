@@ -57,12 +57,9 @@ public class LoginActivity extends AppCompatActivity {
 
             btnLogin.setEnabled(false);
 
-            // Kiểm tra xem input là email hay username
             if (input.contains("@")) {
-                // Đăng nhập trực tiếp bằng Email
                 performFirebaseLogin(input, password);
             } else {
-                // Tìm email tương ứng với username trong Firestore
                 dbHelper.getUserByUsername(input)
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
@@ -93,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
     }
 
-    // Đăng nhập Firebase bằng email/mật khẩu (dùng cho cả đăng nhập bằng email lẫn username)
     private void performFirebaseLogin(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -113,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // Kiểm tra role và điều hướng sau khi đăng nhập thành công
     private void checkUserRole(String uid) {
         dbHelper.getUser(uid)
                 .addOnSuccessListener(documentSnapshot -> {
@@ -128,7 +123,6 @@ public class LoginActivity extends AppCompatActivity {
                                     intent = new Intent(LoginActivity.this, SpaFormActivity.class);
                                 }
                             } else {
-                                // Mặc định là User
                                 intent = new Intent(LoginActivity.this, UserHomeActivity.class);
                             }
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -136,7 +130,6 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                         }
                     } else {
-                        // Nếu tài khoản Auth tồn tại nhưng Firestore chưa có
                         startActivity(new Intent(LoginActivity.this, UserHomeActivity.class));
                         finish();
                     }

@@ -100,7 +100,6 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-    // Đăng ký launcher chọn ảnh, chụp ảnh và xin quyền camera (dùng cho listener của các nút ảnh)
     private void registerLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -134,7 +133,6 @@ public class UserFormActivity extends AppCompatActivity {
         );
     }
 
-    // Tải dữ liệu người dùng khi ở chế độ chỉnh sửa
     private void loadUserData() {
         if (currentUid == null) return;
         dbHelper.getUser(currentUid).addOnSuccessListener(documentSnapshot -> {
@@ -150,7 +148,6 @@ public class UserFormActivity extends AppCompatActivity {
         });
     }
 
-    // Tạo file ảnh tạm rồi mở camera (gọi cả từ nút chụp ảnh lẫn callback cấp quyền)
     private void launchCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_" + System.currentTimeMillis() + ".jpg");
@@ -163,7 +160,6 @@ public class UserFormActivity extends AppCompatActivity {
         }
     }
 
-    // Upload ảnh lên Cloudinary rồi lưu thông tin người dùng
     private void uploadToCloudinary(String displayName) {
         MediaManager.get().upload(imageUri).callback(new UploadCallback() {
             @Override
@@ -185,7 +181,6 @@ public class UserFormActivity extends AppCompatActivity {
         }).dispatch();
     }
 
-    // Lưu thông tin người dùng vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void saveToFirestore(String displayName, String avatarUrl) {
         if (currentUid == null) {
             btnSave.setEnabled(true);

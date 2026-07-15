@@ -11,8 +11,6 @@
     android:fitsSystemWindows="true"
     tools:context=".activities.home.UserHomeActivity">
 
-    <!-- Lớp trong giữ padding thật (fitsSystemWindows ở lớp gốc sẽ ghi đè padding,
-         nên padding nội dung phải đặt ở đây) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,7 +42,6 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
-    <!-- Lời chào -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,7 +81,6 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <!-- Hàng 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -150,7 +146,6 @@
 
         </LinearLayout>
 
-        <!-- Hàng 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -218,7 +213,6 @@
 
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"

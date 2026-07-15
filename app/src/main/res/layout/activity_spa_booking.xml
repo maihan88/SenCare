@@ -8,7 +8,8 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_app"
         android:fitsSystemWindows="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context=".activities.booking.SpaBookingActivity">
 
         <LinearLayout
             android:id="@+id/rlHeader"
@@ -38,7 +39,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="24dp"
                 android:paddingVertical="10dp"
-                android:text="Lịch hẹn của tôi"
+                android:text="Lịch đặt của khách"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -56,28 +57,28 @@
             android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/tabUpcoming"
+                android:id="@+id/tabPending"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_rounded_mint"
                 android:gravity="center"
-                android:text="Sắp tới"
+                android:text="Chờ xác nhận"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tabPast"
+                android:id="@+id/tabConfirmed"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginHorizontal="3dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Đã qua"
+                android:text="Đã xác nhận"
                 android:textColor="@color/text_muted"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tabRejected"
@@ -88,7 +89,7 @@
                 android:gravity="center"
                 android:text="Đã từ chối"
                 android:textColor="@color/text_muted"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -115,21 +116,21 @@
                     tools:visibility="visible" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvUpcoming"
+                    android:id="@+id/rvPending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_booking" />
+                    tools:listitem="@layout/item_spa_booking" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPast"
+                    android:id="@+id/rvConfirmed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_booking" />
+                    tools:listitem="@layout/item_spa_booking" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvRejected"
@@ -138,7 +139,7 @@
                     android:nestedScrollingEnabled="false"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_booking" />
+                    tools:listitem="@layout/item_spa_booking" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

@@ -9,13 +9,16 @@ public class Pet {
     private String personality;
     private String imageUrl;
     private String imagePublicId;
+    private String status;
+    private Timestamp passedAwayAt;
+    private String farewellMessage;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     public Pet() {
     }
 
-    public Pet(String petId, String ownerId, String name, String species, int age, String personality, String imageUrl, String imagePublicId, Timestamp createdAt, Timestamp updatedAt) {
+    public Pet(String petId, String ownerId, String name, String species, int age, String personality, String imageUrl, String imagePublicId, String status, Timestamp passedAwayAt, String farewellMessage, Timestamp createdAt, Timestamp updatedAt) {
         this.petId = petId;
         this.ownerId = ownerId;
         this.name = name;
@@ -24,6 +27,9 @@ public class Pet {
         this.personality = personality;
         this.imageUrl = imageUrl;
         this.imagePublicId = imagePublicId;
+        this.status = status;
+        this.passedAwayAt = passedAwayAt;
+        this.farewellMessage = farewellMessage;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -92,6 +98,30 @@ public class Pet {
         this.imagePublicId = imagePublicId;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Timestamp getPassedAwayAt() {
+        return passedAwayAt;
+    }
+
+    public void setPassedAwayAt(Timestamp passedAwayAt) {
+        this.passedAwayAt = passedAwayAt;
+    }
+
+    public String getFarewellMessage() {
+        return farewellMessage;
+    }
+
+    public void setFarewellMessage(String farewellMessage) {
+        this.farewellMessage = farewellMessage;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -119,6 +149,9 @@ public class Pet {
                 ", personality='" + personality + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", imagePublicId='" + imagePublicId + '\'' +
+                ", status='" + status + '\'' +
+                ", passedAwayAt=" + passedAwayAt +
+                ", farewellMessage='" + farewellMessage + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

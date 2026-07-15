@@ -83,7 +83,6 @@ public class RegisterActivity extends AppCompatActivity {
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
     }
 
-    // Lưu thông tin user vào Firestore sau khi tạo tài khoản Auth thành công
     private void saveUserToFirestore(String uid, String username, String email, String role) {
         User user = new User();
         user.setUid(uid);
@@ -100,7 +99,6 @@ public class RegisterActivity extends AppCompatActivity {
                     if ("spa_owner".equals(role)) {
                         intent = new Intent(RegisterActivity.this, SpaFormActivity.class);
                     } else {
-                        // Chuyển sang UserFormActivity để cài đặt profile (ảnh, tên hiển thị) cho user thường
                         intent = new Intent(RegisterActivity.this, UserFormActivity.class);
                         intent.putExtra("IS_EDIT_MODE", false);
                     }

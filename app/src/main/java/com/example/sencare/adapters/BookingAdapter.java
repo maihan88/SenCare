@@ -39,17 +39,35 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         Booking booking = bookingList.get(position);
-        // Các dòng text (spa, thú cưng - dịch vụ, ngày, giờ) được bind trong XML
         holder.binding.setBooking(booking);
+
+        String status = booking.getStatus();
+
+        boolean isConfirmed = "confirmed".equals(status) || "active".equals(status);
+        boolean isPending = "pending".equals(status);
+        boolean isRejected = "rejected".equals(status);
 
         if (isPast) {
             holder.binding.tvStatus.setText("Đã qua");
             holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_white);
-            holder.binding.btnCancel.setVisibility(View.GONE);
+        } else if (isPending) {
+            holder.binding.tvStatus.setText("Chờ xác nhận");
+            holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_yellow);
+        } else if (isConfirmed) {
+            holder.binding.tvStatus.setText("Đã xác nhận");
+            holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_mint);
+        } else if (isRejected) {
+            holder.binding.tvStatus.setText("Spa đã từ chối");
+            holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_coral);
         } else {
             holder.binding.tvStatus.setText("Sắp tới");
             holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_rounded_yellow);
+        }
+
+        if (!isPast && (isPending || isConfirmed)) {
             holder.binding.btnCancel.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.btnCancel.setVisibility(View.GONE);
         }
 
         holder.binding.btnCancel.setOnClickListener(v -> cancelListener.onCancel(booking));

@@ -117,7 +117,6 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    // Lấy vị trí hiện tại rồi tải danh sách spa (gọi cả từ khi kiểm tra quyền lẫn callback cấp quyền)
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             return;
@@ -132,7 +131,6 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
-    // Lắng nghe realtime
     private void fetchSpas() {
         if (spaListener != null) return;
 
@@ -150,7 +148,6 @@ public class SpaMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 });
     }
 
-    // Lọc spa trong bán kính bằng Haversine rồi vẽ marker lên bản đồ
     private void processSpas() {
         if (userLatLng == null || allSpas.isEmpty())
             return;

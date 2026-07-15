@@ -39,7 +39,6 @@ public class PetSelectAdapter extends RecyclerView.Adapter<PetSelectAdapter.PetV
     @Override
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet pet = petList.get(position);
-        // Tên và loài được bind trong XML
         holder.binding.setPet(pet);
 
         if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {

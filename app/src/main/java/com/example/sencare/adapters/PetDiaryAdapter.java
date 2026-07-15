@@ -51,6 +51,7 @@ public class PetDiaryAdapter extends RecyclerView.Adapter<PetDiaryAdapter.PetDia
             Intent intent = new Intent(v.getContext(), DiaryTimelineActivity.class);
             intent.putExtra("petId", currentPet.getPetId());
             intent.putExtra("petName", currentPet.getName());
+            intent.putExtra("petStatus", currentPet.getStatus());
             v.getContext().startActivity(intent);
         });
     }

@@ -70,7 +70,6 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
         binding.btnDirections.setOnClickListener(v -> {
             if (selectedClinic != null) {
-                // Sử dụng định dạng URL tường minh hơn cho Google Maps
                 String uri = "google.navigation:q=" + selectedClinic.getLatitude() + "," + selectedClinic.getLongitude();
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -78,7 +77,6 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (mapIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(mapIntent);
                 } else {
-                    // Fallback sang trình duyệt nếu không có app Google Maps
                     String webUri = "https://www.google.com/maps/dir/?api=1&destination=" +
                             selectedClinic.getLatitude() + "," + selectedClinic.getLongitude();
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(webUri)));
@@ -133,7 +131,7 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private void fetchVetClinics() {
         dbHelper.getActiveVetClinics()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    mMap.clear(); // Xóa marker cũ nếu có
+                    mMap.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         VetClinic clinic = document.toObject(VetClinic.class);
                         clinic.setClinicId(document.getId());
@@ -145,7 +143,6 @@ public class VetMapActivity extends AppCompatActivity implements OnMapReadyCallb
                 });
     }
 
-    // Vẽ marker cho một phòng khám (gọi lặp cho từng phòng khám lấy được)
     private void addMarkerForClinic(VetClinic clinic) {
         LatLng latLng = new LatLng(clinic.getLatitude(), clinic.getLongitude());
         Marker marker = mMap.addMarker(new MarkerOptions()

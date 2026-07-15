@@ -51,6 +51,21 @@
                 tools:text="Lu Lu" />
 
             <TextView
+                android:id="@+id/tvMemorialBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_card_memorial"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Đã ra đi"
+                android:textColor="@color/text_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/tvPetAge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -64,7 +64,6 @@
                 app:strokeColor="@color/mint"
                 app:strokeWidth="4dp" />
 
-            <!-- Hai nút chọn ảnh / chụp ảnh -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +94,6 @@
 
             </LinearLayout>
 
-            <!-- Nhãn + ô nhập tên hiển thị -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,7 +125,6 @@
 
             </LinearLayout>
 
-            <!-- Nút lưu thông tin -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 style="@style/Widget.SenCare.Button.Primary"

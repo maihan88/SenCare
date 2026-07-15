@@ -65,7 +65,6 @@ public class SpaFormActivity extends AppCompatActivity {
         progressDialog.setMessage("Đang lưu thông tin...");
         progressDialog.setCancelable(false);
 
-        // Chế độ chỉnh sửa (có SPA_ID) hoặc tạo mới (sinh id mới)
         String spaId = getIntent().getStringExtra("SPA_ID");
         if (spaId != null) {
             isEditMode = true;
@@ -115,7 +114,6 @@ public class SpaFormActivity extends AppCompatActivity {
                 return;
             }
 
-            // Đọc toạ độ tự nhập theo dạng "vĩ độ, kinh độ"
             String[] parts = location.split(",");
             if (parts.length != 2) {
                 Toast.makeText(this, "Vị trí phải theo dạng: vĩ độ, kinh độ", Toast.LENGTH_SHORT).show();
@@ -139,7 +137,6 @@ public class SpaFormActivity extends AppCompatActivity {
         });
     }
 
-    // Mở camera chụp ảnh (được gọi cả từ nút chụp ảnh lẫn callback cấp quyền)
     private void openCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, IMAGE_CAPTURE_REQUEST_CODE);
@@ -157,7 +154,6 @@ public class SpaFormActivity extends AppCompatActivity {
         }
     }
 
-    // Tải dữ liệu spa khi ở chế độ chỉnh sửa
     private void loadSpaData(String spaId) {
         dbHelper.getSpa(spaId).addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -188,7 +184,6 @@ public class SpaFormActivity extends AppCompatActivity {
         });
     }
 
-    // Ghép khoảng giá từ giá tối thiểu và tối đa
     private String buildPriceRange(String minStr, String maxStr) {
         if (minStr.isEmpty() && maxStr.isEmpty()) return "";
         String min = minStr.isEmpty() ? "0" : minStr;
@@ -198,7 +193,6 @@ public class SpaFormActivity extends AppCompatActivity {
         return fMin + " - " + fMax + " VNĐ";
     }
 
-    // Upload ảnh lên Cloudinary rồi lưu spa
     private void uploadImageAndSave(String name, String address, String phone, String description, String servicesStr, String priceRange) {
         binding.btnSave.setEnabled(false);
         progressDialog.show();
@@ -225,7 +219,6 @@ public class SpaFormActivity extends AppCompatActivity {
                 }).dispatch();
     }
 
-    // Lưu thông tin spa vào Firestore (được gọi cả khi có và không có ảnh mới)
     private void saveSpaToFirestore(String name, String address, String phone, String description, String servicesStr, String priceRange) {
         if (!progressDialog.isShowing()) progressDialog.show();
         ArrayList<String> servicesList = new ArrayList<>(Arrays.asList(servicesStr.split(",\\s*")));
@@ -258,7 +251,6 @@ public class SpaFormActivity extends AppCompatActivity {
         });
     }
 
-    // Cập nhật thông tin spa cho user rồi kết thúc màn hình
     private void updateUserAndFinish() {
         String uid = FirebaseUtil.getCurrentUserId();
         dbHelper.updateUserSpaInfo(uid, currentSpaId, true).addOnSuccessListener(aVoid -> {

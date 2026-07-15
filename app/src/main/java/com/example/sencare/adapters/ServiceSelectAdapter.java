@@ -29,7 +29,6 @@ public class ServiceSelectAdapter extends RecyclerView.Adapter<ServiceSelectAdap
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
         String service = serviceList.get(position);
-        // Tên dịch vụ được bind trong XML
         holder.binding.setService(service);
         holder.binding.cbService.setChecked(selectedPosition == position);
 

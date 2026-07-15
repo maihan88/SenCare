@@ -3,6 +3,7 @@ package com.example.sencare.activities.diary;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +39,7 @@ public class DiaryTimelineActivity extends AppCompatActivity {
 
     private FirestoreHelper dbHelper;
     private ListenerRegistration diaryListener;
-    private String petId, petName;
+    private String petId, petName, petStatus;
     private TimelineDateAdapter adapter;
     private List<TimelineGroup> timelineList;
 
@@ -56,6 +57,7 @@ public class DiaryTimelineActivity extends AppCompatActivity {
 
         petId = getIntent().getStringExtra("petId");
         petName = getIntent().getStringExtra("petName");
+        petStatus = getIntent().getStringExtra("petStatus");
 
         if (petId == null) {
             Toast.makeText(this, "Lỗi: Không tìm thấy thú cưng!", Toast.LENGTH_SHORT).show();
@@ -68,6 +70,10 @@ public class DiaryTimelineActivity extends AppCompatActivity {
         }
 
         btnBack.setOnClickListener(v -> finish());
+
+        if ("memorial".equals(petStatus)) {
+            btnAddDiary.setVisibility(View.GONE);
+        }
 
         btnAddDiary.setOnClickListener(v -> {
              Intent intent = new Intent(this, AddDiaryActivity.class);
@@ -109,8 +115,6 @@ public class DiaryTimelineActivity extends AppCompatActivity {
                     }
 
                     if (value != null) {
-                        // Đọc tất cả nhật ký rồi sắp xếp mới nhất trước
-                        // (thay cho orderBy để không cần composite index)
                         List<Diary> diaries = new ArrayList<>();
                         for (QueryDocumentSnapshot doc : value) {
                             Diary diary = doc.toObject(Diary.class);

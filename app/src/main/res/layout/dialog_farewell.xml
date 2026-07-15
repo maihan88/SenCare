@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:background="@drawable/dove_b"
+        android:gravity="center"
+        android:textSize="34sp"
+        android:contentDescription="Tiễn biệt bé" />
+
+    <TextView
+        android:id="@+id/tvFarewellTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        tools:text="Tiễn biệt Luka" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:paddingHorizontal="8dp"
+        android:text="Hồ sơ và toàn bộ nhật ký của bé sẽ được giữ lại trong Góc tưởng niệm."
+        android:textAlignment="center"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="Ngày bé ra đi"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvPassedDate"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_edittext"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="14dp"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        app:drawableStartCompat="@drawable/ic_calendar_24"
+        app:drawableTint="@color/text_primary"
+        tools:text="15/07/2026" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Lời tiễn biệt"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/edtFarewell"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_edittext"
+        android:gravity="top|start"
+        android:hint="Gửi vài lời tới bé..."
+        android:inputType="textMultiLine"
+        android:padding="14dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_muted"
+        android:textSize="14sp" />
+
+</LinearLayout>

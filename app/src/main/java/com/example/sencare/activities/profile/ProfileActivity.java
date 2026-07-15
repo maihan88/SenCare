@@ -29,22 +29,18 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Khởi tạo Firebase và Helper
         mAuth = FirebaseUtil.getAuth();
         dbHelper = new FirestoreHelper();
 
-        // Ánh xạ View đúng với ID mới trong activity_profile.xml
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
         MaterialButton btnBack = findViewById(R.id.btnBack);
         MaterialButton btnEdit = findViewById(R.id.btnEditInfo);
 
-        // Nút Quay lại (Back)
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        // Nút Chỉnh sửa
         if (btnEdit != null) {
             btnEdit.setOnClickListener(v -> {
                 Intent intent = new Intent(ProfileActivity.this, UserFormActivity.class);
@@ -52,8 +48,6 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
-
-        // Tải thông tin người dùng từ Firestore (Sẽ tải lại mỗi khi quay về màn hình này)
     }
 
     @Override
@@ -69,15 +63,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if (documentSnapshot.exists()) {
                     User user = documentSnapshot.toObject(User.class);
                     if (user != null) {
-                        // Hiển thị tên (fullName) và email từ model User
                         if (tvName != null) {
                             tvName.setText(user.getFullName() != null ? user.getFullName() : "User");
                         }
                         if (tvEmail != null) {
                             tvEmail.setText(user.getEmail() != null ? user.getEmail() : "No Email");
                         }
-                        
-                        // Hiển thị ảnh đại diện
+
                         ImageView ivAvatar = findViewById(R.id.ivAvatar);
                         if (ivAvatar != null && user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
                             Glide.with(this).load(user.getAvatarUrl()).into(ivAvatar);
@@ -86,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, "Không tìm thấy dữ liệu người dùng", Toast.LENGTH_SHORT).show();
                 }
-            }).addOnFailureListener(e -> 
+            }).addOnFailureListener(e ->
                 Toast.makeText(this, "Lỗi tải thông tin: " + e.getMessage(), Toast.LENGTH_SHORT).show()
             );
         } else {

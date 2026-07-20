@@ -249,7 +249,7 @@ Việc một lịch nằm trong nhóm **sắp tới** hay **đã qua** được 
 | Nền tảng | Android Native | Xây dựng ứng dụng chạy trực tiếp trên Android |
 | Ngôn ngữ | Java 11 | Xử lý nghiệp vụ và tương tác giao diện |
 | Giao diện | XML Layout, Material Components | Xây dựng màn hình và thành phần UI |
-| Liên kết giao diện | View Binding, Data Binding | Truy cập view an toàn và liên kết dữ liệu |
+| Liên kết giao diện | View Binding, Data Binding | Truy cập view an toàn và liên kết dữ liệu. View Binding có khai báo nhưng chưa sử dụng |
 | Xác thực | Firebase Authentication | Đăng ký, đăng nhập và khôi phục mật khẩu |
 | Cơ sở dữ liệu | Cloud Firestore | Lưu tài khoản, thú cưng, nhật ký, spa, lịch đặt và trạm thú y |
 | Lưu trữ ảnh | Cloudinary | Lưu ảnh đại diện, ảnh thú cưng, nhật ký và spa |

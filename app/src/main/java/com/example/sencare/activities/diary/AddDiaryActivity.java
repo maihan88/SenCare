@@ -221,7 +221,6 @@ public class AddDiaryActivity extends AppCompatActivity {
         diaryData.put("imageUrl", imageUrl);
         diaryData.put("imagePublicId", imagePublicId);
         diaryData.put("caption", caption);
-        diaryData.put("description", caption);
         diaryData.put("createdAt", Timestamp.now());
         diaryData.put("updatedAt", Timestamp.now());
 
